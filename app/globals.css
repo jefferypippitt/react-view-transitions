@@ -127,3 +127,113 @@
     @apply font-sans;
     }
 }
+/* Product photo surface: white in both themes. Most shots are dark items, and
+   some (e.g. SP-06 Black, SG-03) have opaque white backgrounds. */
+:root {
+  --product: oklch(1 0 0);
+}
+
+@theme inline {
+  --color-product: var(--product);
+}
+
+/* ── View transitions ─────────────────────────────────────────────
+   Recipes from .agents/skills/vercel-react-view-transitions/references/css-recipes.md */
+
+:root {
+  /* Slower than the skill defaults (150/210ms) so demos read clearly */
+  --duration-exit: 200ms;
+  --duration-enter: 350ms;
+  --duration-move: 400ms;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* <ViewTransition enter="fade-in" exit="fade-out"> */
+::view-transition-old(.fade-out) {
+  /* `both` keeps the old page at opacity 0 after its fade ends; without it the
+     old snapshot snaps back to full opacity until the fade-in finishes. */
+  animation: var(--duration-exit) ease-in both fade reverse;
+}
+::view-transition-new(.fade-in) {
+  animation: var(--duration-enter) ease-out var(--duration-exit) both fade;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* Let clicks reach the page while a transition is still animating (rapid
+   prev/next clicks were swallowed by the overlay). Named groups still skip
+   hit-testing mid-transition; see css-recipes.md#interactivity-during-transitions */
+::view-transition {
+  pointer-events: none;
+}
+
+/* ── Progressive blur (shop header) ─────────────────────────────────
+   Five stacked backdrop blurs, each masked to a shorter band from the top,
+   so the blur builds up toward the top edge and dissolves into the page
+   (no hard line). A soft background tint keeps the header text readable.
+   The layer runs past its container (height: 125%) for a soft trailing edge. */
+.progressive-blur {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 125%;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklch, var(--background) 65%, transparent) 0%,
+    color-mix(in oklch, var(--background) 30%, transparent) 60%,
+    transparent 100%
+  );
+}
+.progressive-blur > div {
+  position: absolute;
+  inset: 0;
+}
+.progressive-blur > div:nth-child(1) {
+  backdrop-filter: blur(0.5px);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+}
+.progressive-blur > div:nth-child(2) {
+  backdrop-filter: blur(1px);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 80%);
+}
+.progressive-blur > div:nth-child(3) {
+  backdrop-filter: blur(2px);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 60%);
+}
+.progressive-blur > div:nth-child(4) {
+  backdrop-filter: blur(4px);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 20%, transparent 40%);
+}
+.progressive-blur > div:nth-child(5) {
+  backdrop-filter: blur(8px);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 25%);
+}
+
+/* The blurred header is pinned during page fades: its own group above the
+   page content, no cross-fade, and the old snapshot hidden (backdrop-filter
+   snapshots flash otherwise). See css-recipes.md#backdrop-blur-workaround */
+::view-transition-group(shop-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(shop-header) {
+  display: none;
+}
+::view-transition-new(shop-header) {
+  animation: none;
+}
