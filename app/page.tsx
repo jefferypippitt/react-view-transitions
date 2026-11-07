@@ -37,7 +37,9 @@ export default function Page() {
                   <span className="w-6 text-muted-foreground tabular-nums">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <span className="font-semibold">{`'${example.name}'`}</span>
+                  <span className="font-semibold">
+                    {example.transitions.map((t) => `'${t}'`).join(" + ")}
+                  </span>
                   <RiArrowRightLine className="ms-auto size-4 shrink-0 transition-transform group-hover:translate-x-1" />
                 </Link>
               </li>

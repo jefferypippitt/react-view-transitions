@@ -10,8 +10,9 @@ type Cart = {
 const CartContext = createContext<Cart | null>(null)
 
 /**
- * In-memory cart for the shop demo. Lives in the /fade layout, so it survives
- * navigating between the grid and product pages (layouts don't remount).
+ * In-memory cart for the shop demos. Lives in each demo's layout, so it
+ * survives navigating between the grid and product pages (layouts don't
+ * remount). Each demo has its own cart.
  */
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [quantities, setQuantities] = useState<Record<string, number>>({})
