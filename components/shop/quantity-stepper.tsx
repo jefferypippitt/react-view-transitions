@@ -10,14 +10,19 @@ export function QuantityStepper({
   id,
   label,
   size = "sm",
+  onChange,
 }: {
   id: string
   label: string
   /** "xs" for grid cards, "sm" for the product page. */
   size?: "xs" | "sm"
+  /** Replaces the plain cart update, e.g. to run it in a Transition. */
+  onChange?: (quantity: number) => void
 }) {
-  const { quantities, setQuantity } = useCart()
-  const quantity = quantities[id] ?? 0
+  const cart = useCart()
+  const quantity = cart.quantities[id] ?? 0
+  const change = (next: number) =>
+    onChange ? onChange(next) : cart.setQuantity(id, next)
   const buttonSize = size === "xs" ? "icon-xs" : "icon-sm"
 
   return (
@@ -27,7 +32,7 @@ export function QuantityStepper({
         size={buttonSize}
         aria-label={`Remove one ${label}`}
         disabled={quantity === 0}
-        onClick={() => setQuantity(id, quantity - 1)}
+        onClick={() => change(quantity - 1)}
       >
         <RiSubtractLine />
       </Button>
@@ -42,7 +47,7 @@ export function QuantityStepper({
         variant="outline"
         size={buttonSize}
         aria-label={`Add one ${label}`}
-        onClick={() => setQuantity(id, quantity + 1)}
+        onClick={() => change(quantity + 1)}
       >
         <RiAddLine />
       </Button>

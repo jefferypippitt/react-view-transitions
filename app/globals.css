@@ -268,6 +268,176 @@
     var(--duration-move) ease-in-out both slide;
 }
 
+/* Fly + Dock (components/shop/fly-catalog.tsx). A copy of the photo is
+   tossed between its card and the dock. The group carries it in a straight
+   line; the image pair adds a lift on top (up fast, down slow), so the path
+   arcs. z-index keeps it above the dock, which comes later in the DOM. */
+::view-transition-group(.fly) {
+  animation-duration: 550ms;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+  z-index: 50;
+}
+::view-transition-image-pair(.fly) {
+  animation: 550ms linear both toss;
+}
+@keyframes toss {
+  0% {
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  40% {
+    translate: 0 -72px;
+    rotate: -6deg;
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+}
+
+/* The dock rises from below the viewport edge when the bag gets its first
+   item, and drops back when it empties. */
+::view-transition-new(.dock-in) {
+  --slide-offset: 0 calc(100% + 1.5rem);
+  animation: var(--duration-move) cubic-bezier(0.32, 0.72, 0, 1) both slide;
+}
+::view-transition-old(.dock-out) {
+  --slide-offset: 0 calc(100% + 1.5rem);
+  animation: var(--duration-move) cubic-bezier(0.32, 0.72, 0, 1) both slide
+    reverse;
+}
+
+/* Layout + Stagger (components/shop/stagger-catalog.tsx). Every part of
+   every product morphs between the grid and the list, each one held back by
+   its place in the list (--wave × 20ms), so the switch sweeps through the
+   shop as a wave. The delay goes on the group and on both snapshots: they
+   all wait, then move and cross-fade together. */
+::view-transition-group(.layout),
+::view-transition-group(.layout-text) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+::view-transition-group(.layout),
+::view-transition-old(.layout),
+::view-transition-new(.layout),
+::view-transition-group(.layout-text),
+::view-transition-old(.layout-text),
+::view-transition-new(.layout-text) {
+  animation-delay: calc(var(--wave, 0) * 20ms);
+}
+/* Names: a truncated name in one view is whole in the other, so scaling the
+   snapshots would stretch the text. Hide the old one and move the new one
+   unscaled (css-recipes.md#text-morph). */
+::view-transition-old(.layout-text) {
+  display: none;
+}
+::view-transition-new(.layout-text) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
+}
+::view-transition-group(.wave-1),
+::view-transition-old(.wave-1),
+::view-transition-new(.wave-1) {
+  --wave: 1;
+}
+::view-transition-group(.wave-2),
+::view-transition-old(.wave-2),
+::view-transition-new(.wave-2) {
+  --wave: 2;
+}
+::view-transition-group(.wave-3),
+::view-transition-old(.wave-3),
+::view-transition-new(.wave-3) {
+  --wave: 3;
+}
+::view-transition-group(.wave-4),
+::view-transition-old(.wave-4),
+::view-transition-new(.wave-4) {
+  --wave: 4;
+}
+::view-transition-group(.wave-5),
+::view-transition-old(.wave-5),
+::view-transition-new(.wave-5) {
+  --wave: 5;
+}
+::view-transition-group(.wave-6),
+::view-transition-old(.wave-6),
+::view-transition-new(.wave-6) {
+  --wave: 6;
+}
+::view-transition-group(.wave-7),
+::view-transition-old(.wave-7),
+::view-transition-new(.wave-7) {
+  --wave: 7;
+}
+::view-transition-group(.wave-8),
+::view-transition-old(.wave-8),
+::view-transition-new(.wave-8) {
+  --wave: 8;
+}
+::view-transition-group(.wave-9),
+::view-transition-old(.wave-9),
+::view-transition-new(.wave-9) {
+  --wave: 9;
+}
+::view-transition-group(.wave-10),
+::view-transition-old(.wave-10),
+::view-transition-new(.wave-10) {
+  --wave: 10;
+}
+::view-transition-group(.wave-11),
+::view-transition-old(.wave-11),
+::view-transition-new(.wave-11) {
+  --wave: 11;
+}
+::view-transition-group(.wave-12),
+::view-transition-old(.wave-12),
+::view-transition-new(.wave-12) {
+  --wave: 12;
+}
+::view-transition-group(.wave-13),
+::view-transition-old(.wave-13),
+::view-transition-new(.wave-13) {
+  --wave: 13;
+}
+::view-transition-group(.wave-14),
+::view-transition-old(.wave-14),
+::view-transition-new(.wave-14) {
+  --wave: 14;
+}
+::view-transition-group(.wave-15),
+::view-transition-old(.wave-15),
+::view-transition-new(.wave-15) {
+  --wave: 15;
+}
+::view-transition-group(.wave-16),
+::view-transition-old(.wave-16),
+::view-transition-new(.wave-16) {
+  --wave: 16;
+}
+
+/* Search + Reflow (components/shop/search-catalog.tsx). Results that stop
+   matching shrink away quickly; ones that match again pop in just after, so
+   the leaving card is gone before the arriving one lands. Cards that stay
+   glide to their new cells on a snappier curve than the default. */
+@keyframes search-pop {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+::view-transition-old(.search-out) {
+  animation: 160ms ease-in both search-pop reverse;
+}
+::view-transition-new(.search-in) {
+  animation: 240ms ease-out 100ms both search-pop;
+}
+::view-transition-group(.search-move) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(*),
   ::view-transition-new(*),

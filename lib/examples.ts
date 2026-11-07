@@ -12,4 +12,7 @@ export const examples: Example[] = [
   { href: "/fade", transitions: ["Fade"] },
   { href: "/morph", transitions: ["Morph", "Slide"] },
   { href: "/expand", transitions: ["Expand", "Carousel"] },
+  { href: "/fly", transitions: ["Fly", "Dock"] },
+  { href: "/stagger", transitions: ["Layout", "Stagger"] },
+  { href: "/search", transitions: ["Search", "Reflow"] },
 ]

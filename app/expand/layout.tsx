@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { ProgressiveBlur } from "@/components/progressive-blur"
-import { CartCount, CartProvider } from "@/components/shop/cart"
+import { BagLink, CartProvider } from "@/components/shop/cart"
 
 export default function ExpandLayout({ children }: LayoutProps<"/expand">) {
   return (
@@ -15,9 +15,7 @@ export default function ExpandLayout({ children }: LayoutProps<"/expand">) {
           <Link href="/" className="relative font-semibold tracking-widest">
             Home
           </Link>
-          <span className="relative">
-            <CartCount />
-          </span>
+          <BagLink href="/expand/checkout" transitionTypes={["nav-forward"]} />
         </header>
         {children}
       </div>

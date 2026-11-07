@@ -202,3 +202,19 @@ export function formatPrice(price: number) {
 export function cartKey(product: Product, variant: Variant) {
   return `${product.id}:${variant.color.toLowerCase()}`
 }
+
+/** The product and color behind a cartKey. */
+export function getCartLine(key: string) {
+  const [id, color] = key.split(":")
+  const product = id ? getProduct(id) : undefined
+  const variant = product?.variants.find((v) => v.color.toLowerCase() === color)
+  return product && variant ? { key, product, variant } : undefined
+}
+
+/**
+ * `sizes` for a product photo in a grid card. Thumbnails of the same photo use
+ * it too, so they pick the same srcset file: it's already loaded when a shared
+ * element morph snapshots it.
+ */
+export const productImageSizes =
+  "(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
