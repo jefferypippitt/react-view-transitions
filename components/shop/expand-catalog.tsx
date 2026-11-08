@@ -47,20 +47,25 @@ export function ExpandCatalog() {
   const index = openId ? shown.findIndex((p) => p.id === openId) : -1
   const open = shown[index]
 
-  function show(id: string | null, step?: Step) {
+  // `instant` (keyboard shortcuts) skips the Transition: a plain state update
+  // doesn't run view transitions, so the change lands at once.
+  function show(id: string | null, step?: Step, instant = false) {
+    if (instant) return setOpenId(id)
     startTransition(() => {
       if (step) addTransitionType(step)
       setOpenId(id)
     })
   }
 
-  function close() {
-    startTransition(() => {
+  function close(instant = false) {
+    const update = () => {
       // Grouping showed every product, so the sheet may be on one the filter
       // hides. Clear the filter so its card is there for the photo to land in.
       if (open && !matching.includes(open)) setFilter(null)
       setOpenId(null)
-    })
+    }
+    if (instant) update()
+    else startTransition(update)
   }
 
   function selectFilter(next: Filter | null) {
@@ -93,9 +98,9 @@ export function ExpandCatalog() {
     card?.querySelector("button")?.focus({ preventScroll: true })
   }, [openId])
 
-  function step(direction: Step) {
+  function step(direction: Step, instant = false) {
     const target = shown[index + (direction === "nav-forward" ? 1 : -1)]
-    if (target) show(target.id, direction)
+    if (target) show(target.id, direction, instant)
   }
 
   // While the sheet is open, the grid's photos recede except the one Next goes
@@ -225,7 +230,7 @@ function ProductCard({
               alt={variantAlt(product, variant)}
               fill
               sizes="(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
-              className="object-contain p-[8%] transition-transform duration-500 ease-out group-hover:scale-105"
+              className="object-contain p-[8%] transition-transform duration-300 ease-out group-hover:scale-105"
             />
           </div>
         </ViewTransition>

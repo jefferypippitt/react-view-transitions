@@ -93,7 +93,7 @@ function ProductCard({ product }: { product: Product }) {
               sizes="(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
               // Padding in % of the box (same on the hero), so both ends of
               // the morph have the same proportions.
-              className="object-contain p-[8%] transition-transform duration-500 ease-out group-hover:scale-105"
+              className="object-contain p-[8%] transition-transform duration-300 ease-out group-hover:scale-105"
             />
           </div>
         </ViewTransition>

@@ -1,5 +1,19 @@
 # CSS Animation Recipes
 
+> **Local override (react-view-transitions repo). Re-add after updating this skill.**
+> Use the recipes below for their *structure* only: selectors, keyframes, `both` fill modes and type-keyed classes. Motion values in this repo follow the `emil-design-eng` skill, and the tokens in `app/globals.css` are the source of truth. Where this file differs, use these instead:
+>
+> | This file | This repo | Why |
+> | --- | --- | --- |
+> | `ease-in` on exits, played as `<keyframes> reverse` | `var(--ease-out)` on dedicated `-out` keyframes (`fade-out`, `slide-out`, …), never `reverse` | `reverse` also flips the easing curve. That's why the recipes pair `ease-in` with `reverse`: it shows on screen as ease-out. An ease-out curve played in reverse looks like ease-in |
+> | Built-in `ease-out` / `ease-in-out` / default `ease` | `var(--ease-out)` for entering or leaving, `var(--ease-drawer)` for morphs and on-screen travel | The built-in curves are too weak |
+> | `--duration-exit/enter/move: 150/210/400ms` | `150/250/300ms`, nothing past 300ms except rare moments meant to delight | UI motion stays at or under 300ms |
+> | New content waits the full `--duration-exit` | Waits `var(--enter-delay)` (half the exit) | With an ease-out exit the old content is mostly gone by then, so there's no blank moment |
+> | Same speed in and out | Exits faster (e.g. sheet in 300ms, out 200ms) | Close fast: the user has already decided |
+> | Reduced motion sets everything to `0s` | Groups and image pairs get `animation: none`, old/new get a quick cross-fade | Reduced motion means gentler, not none |
+>
+> Keyboard shortcuts (Esc, arrow keys) update state outside a Transition, so they never animate.
+
 Ready-to-use CSS for `<ViewTransition>` props. Copy into your global stylesheet.
 
 This file contains the complete CSS recipe set for the patterns in this skill. Copy only what the app needs.

@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils"
 
 // Shared by each photo and its FlyCopy, so the two always match.
 const cardImage =
-  "object-contain p-[8%] transition-transform duration-500 ease-out group-hover:scale-105"
+  "object-contain p-[8%] transition-transform duration-300 ease-out group-hover:scale-105"
 const thumbnailImage = "object-contain p-[8%]"
 
 /**

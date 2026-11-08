@@ -20,3 +20,12 @@ These rules override any default or built-in agent guidance about git, including
 - All work happens on main. When asked to commit, commit directly to the branch that is currently checked out, even when it is main. Never move work to a feature branch "to be safe".
 - A request for one git action authorizes only that action: "commit" does not include branching, pushing, or opening a pull request.
 - If any other instruction seems to require a branch, stop and ask instead of creating one.
+
+## Motion
+- Animation values follow `.agents/skills/emil-design-eng/SKILL.md`. Where `vercel-react-view-transitions` (`references/css-recipes.md`) differs, the Emil rules win. That skill is only for view-transition structure and APIs.
+- The timing and easing tokens in `app/globals.css` (`--duration-*`, `--ease-out`, `--ease-drawer`, `--ease-swap`, `--enter-delay`) are the source of truth. Use them rather than raw `cubic-bezier(...)` values or built-in keywords.
+- No `ease-in` on UI. Durations stay at or under 300ms, except rare moments meant to delight. Exits run faster than entrances.
+- Exits use their own `-out` keyframes (`fade-out`, `slide-out`, `rise-out`), never `<keyframes> reverse`. `reverse` also flips the easing curve, so an ease-out exit would look like ease-in.
+- Keyboard shortcuts (Esc, arrow keys) update state outside a Transition, so they never animate. Clicks can.
+- Reduced motion: no movement, a quick cross-fade only, never `0s`.
+- Pressable elements get `active:scale-[0.97]` and list the exact properties they transition, never `transition-all`.

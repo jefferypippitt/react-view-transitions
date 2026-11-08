@@ -86,7 +86,7 @@ function ProductCard({ product }: { product: Product }) {
             alt={variantAlt(product, variant)}
             fill
             sizes="(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="object-contain p-5 transition-transform duration-500 ease-out group-hover:scale-105"
+            className="object-contain p-5 transition-transform duration-300 ease-out group-hover:scale-105"
           />
         </div>
       </Link>

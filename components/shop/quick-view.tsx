@@ -72,16 +72,19 @@ export function QuickView({
   product: Product
   index: number
   count: number
-  onClose: () => void
-  onStep: (step: Step) => void
+  /** `instant`: skip the animation (keyboard shortcuts). */
+  onClose: (instant?: boolean) => void
+  onStep: (step: Step, instant?: boolean) => void
 }) {
   useEffect(() => {
+    // Keyboard shortcuts act instantly: they get pressed over and over, and an
+    // animation on each press makes them feel slow. Clicks still animate.
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") return onClose()
+      if (event.key === "Escape") return onClose(true)
       // Arrow keys inside a control (the color toggles) belong to it.
       if ((event.target as Element).closest?.('[role="group"]')) return
-      if (event.key === "ArrowRight") onStep("nav-forward")
-      else if (event.key === "ArrowLeft") onStep("nav-back")
+      if (event.key === "ArrowRight") onStep("nav-forward", true)
+      else if (event.key === "ArrowLeft") onStep("nav-back", true)
     }
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
@@ -94,7 +97,7 @@ export function QuickView({
           to animate. */}
       <div
         aria-hidden
-        onClick={onClose}
+        onClick={() => onClose()}
         className="fixed inset-x-0 top-12 bottom-0 z-20"
       />
       <ViewTransition enter="sheet-in" exit="sheet-out" default="none">
@@ -134,7 +137,7 @@ export function QuickView({
               size="icon-sm"
               aria-label="Close quick view"
               autoFocus
-              onClick={onClose}
+              onClick={() => onClose()}
             >
               <RiCloseLine />
             </Button>
