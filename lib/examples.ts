@@ -18,4 +18,5 @@ export const examples: Example[] = [
   { href: "/swap", transitions: ["Swap", "Roll"] },
   { href: "/tuck", transitions: ["Tuck", "Spill"] },
   { href: "/grow", transitions: ["Grow", "Shift", "Slide"] },
+  { href: "/blur", transitions: ["Blur"] },
 ]

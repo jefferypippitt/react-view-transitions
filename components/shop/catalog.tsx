@@ -22,7 +22,17 @@ import {
  * a search-param change remounts the page in Next, which would fade the filter
  * row out and back in too. Here only the grid (keyed by filter) fades.
  */
-export function Catalog() {
+export function Catalog({
+  href = "/fade",
+  enter = "fade-in",
+  exit = "fade-out",
+}: {
+  /** The demo's route: cards link to `${href}/<id>`. */
+  href?: string
+  /** View transition classes for the grid swapping on a filter change. */
+  enter?: string
+  exit?: string
+} = {}) {
   const [filter, setFilter] = useState<Filter | null>(null)
   const shown = getProducts(filter ?? undefined)
 
@@ -30,7 +40,9 @@ export function Catalog() {
     <div className="flex flex-col gap-10">
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 whitespace-nowrap">
         {/* Same type as the small toggles beside it: 0.8rem, medium weight. */}
-        <h1 className="text-[0.8rem] font-medium tracking-wide">All products</h1>
+        <h1 className="text-[0.8rem] font-medium tracking-wide">
+          All products
+        </h1>
         <ToggleGroup
           size="sm"
           aria-label="Filter products"
@@ -59,13 +71,13 @@ export function Catalog() {
           fades out and the new set fades in. */}
       <ViewTransition
         key={filter ?? "all"}
-        enter="fade-in"
-        exit="fade-out"
+        enter={enter}
+        exit={exit}
         default="none"
       >
         <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {shown.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} href={href} />
           ))}
         </div>
       </ViewTransition>
@@ -73,12 +85,15 @@ export function Catalog() {
   )
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({ product, href }: { product: Product; href: string }) {
   const [variant] = product.variants
 
   return (
     <article className="flex min-w-0 flex-col gap-3">
-      <Link href={`/fade/${product.id}`} className="group flex flex-col gap-3">
+      <Link
+        href={`${href}/${product.id}`}
+        className="group flex flex-col gap-3"
+      >
         <h2 className="truncate font-medium">{`'${product.name}'`}</h2>
         <div className="relative aspect-square overflow-hidden bg-product">
           <Image

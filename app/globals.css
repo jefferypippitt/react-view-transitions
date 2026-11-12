@@ -195,6 +195,34 @@
     fade;
 }
 
+/* <ViewTransition enter="blur-in" exit="blur-out">: a focus pull. Same
+   timing as the fade above, but the old view drifts out of focus as it
+   goes and the new one sharpens into place. Used by the Blur demo (app/blur)
+   for pages, the filtered grid and color swaps. */
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes blur-out {
+  to {
+    opacity: 0;
+    filter: blur(12px);
+  }
+}
+::view-transition-old(.blur-out) {
+  animation: var(--duration-exit) var(--ease-out) both blur-out;
+}
+::view-transition-new(.blur-in) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both
+    blur-in;
+}
+
 /* <SlideTransition> (components/slide-transition.tsx): types nav-forward /
    nav-back map to these classes. Forward: old leaves left, new comes from the
    right. Back: the reverse. */

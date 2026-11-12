@@ -6,14 +6,18 @@ import { startTransition, useState, ViewTransition } from "react"
 import { QuantityStepper } from "@/components/shop/quantity-stepper"
 import { Separator } from "@/components/ui/separator"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import {
-  cartKey,
-  formatPrice,
-  type Product,
-  variantAlt,
-} from "@/lib/media"
+import { cartKey, formatPrice, type Product, variantAlt } from "@/lib/media"
 
-export function ProductView({ product }: { product: Product }) {
+export function ProductView({
+  product,
+  enter = "fade-in",
+  exit = "fade-out",
+}: {
+  product: Product
+  /** View transition classes for the photo swapping on a color pick. */
+  enter?: string
+  exit?: string
+}) {
   const [color, setColor] = useState(product.variants[0].color)
   const variant =
     product.variants.find((v) => v.color === color) ?? product.variants[0]
@@ -22,11 +26,12 @@ export function ProductView({ product }: { product: Product }) {
     <div className="grid max-w-5xl gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-12">
       <div className="relative aspect-square overflow-hidden bg-product">
         {/* Keyed by color: picking a color swaps this subtree, so the old
-            shot exits and the new one enters with the same fade as pages. */}
+            shot exits and the new one enters with the same animation as
+            pages. */}
         <ViewTransition
           key={variant.color}
-          enter="fade-in"
-          exit="fade-out"
+          enter={enter}
+          exit={exit}
           default="none"
         >
           <Image
