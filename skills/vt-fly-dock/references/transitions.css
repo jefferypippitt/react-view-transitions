@@ -1,0 +1,84 @@
+:root {
+  --duration-exit: 150ms;
+  --duration-enter: 250ms;
+  --duration-move: 300ms;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --enter-delay: calc(var(--duration-exit) / 2);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+@keyframes slide-out {
+  to {
+    translate: var(--slide-offset);
+  }
+}
+
+::view-transition-group(.fly) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+  z-index: 50;
+}
+::view-transition-image-pair(.fly) {
+  animation: 450ms linear both toss;
+}
+@keyframes toss {
+  0% {
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  40% {
+    translate: 0 -72px;
+    rotate: -6deg;
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+}
+
+::view-transition-new(.dock-in) {
+  --slide-offset: 0 calc(100% + 1.5rem);
+  animation: var(--duration-move) var(--ease-drawer) both slide;
+}
+::view-transition-old(.dock-out) {
+  --slide-offset: 0 calc(100% + 1.5rem);
+  animation: 200ms var(--ease-drawer) both slide-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation: none !important;
+  }
+  ::view-transition-old(*) {
+    animation: 150ms var(--ease-out) both fade-out !important;
+  }
+  ::view-transition-new(*) {
+    animation: 200ms var(--ease-out) both fade !important;
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}

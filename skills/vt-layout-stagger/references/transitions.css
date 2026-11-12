@@ -1,0 +1,144 @@
+:root {
+  --duration-exit: 150ms;
+  --duration-enter: 250ms;
+  --duration-move: 300ms;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --enter-delay: calc(var(--duration-exit) / 2);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+::view-transition-group(.layout),
+::view-transition-group(.layout-text) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: var(--ease-drawer);
+}
+::view-transition-group(.layout),
+::view-transition-old(.layout),
+::view-transition-new(.layout),
+::view-transition-group(.layout-text),
+::view-transition-old(.layout-text),
+::view-transition-new(.layout-text) {
+  animation-delay: calc(var(--wave, 0) * 20ms);
+}
+::view-transition-old(.layout-text) {
+  display: none;
+}
+::view-transition-new(.layout-text) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
+}
+::view-transition-group(.wave-1),
+::view-transition-old(.wave-1),
+::view-transition-new(.wave-1) {
+  --wave: 1;
+}
+::view-transition-group(.wave-2),
+::view-transition-old(.wave-2),
+::view-transition-new(.wave-2) {
+  --wave: 2;
+}
+::view-transition-group(.wave-3),
+::view-transition-old(.wave-3),
+::view-transition-new(.wave-3) {
+  --wave: 3;
+}
+::view-transition-group(.wave-4),
+::view-transition-old(.wave-4),
+::view-transition-new(.wave-4) {
+  --wave: 4;
+}
+::view-transition-group(.wave-5),
+::view-transition-old(.wave-5),
+::view-transition-new(.wave-5) {
+  --wave: 5;
+}
+::view-transition-group(.wave-6),
+::view-transition-old(.wave-6),
+::view-transition-new(.wave-6) {
+  --wave: 6;
+}
+::view-transition-group(.wave-7),
+::view-transition-old(.wave-7),
+::view-transition-new(.wave-7) {
+  --wave: 7;
+}
+::view-transition-group(.wave-8),
+::view-transition-old(.wave-8),
+::view-transition-new(.wave-8) {
+  --wave: 8;
+}
+::view-transition-group(.wave-9),
+::view-transition-old(.wave-9),
+::view-transition-new(.wave-9) {
+  --wave: 9;
+}
+::view-transition-group(.wave-10),
+::view-transition-old(.wave-10),
+::view-transition-new(.wave-10) {
+  --wave: 10;
+}
+::view-transition-group(.wave-11),
+::view-transition-old(.wave-11),
+::view-transition-new(.wave-11) {
+  --wave: 11;
+}
+::view-transition-group(.wave-12),
+::view-transition-old(.wave-12),
+::view-transition-new(.wave-12) {
+  --wave: 12;
+}
+::view-transition-group(.wave-13),
+::view-transition-old(.wave-13),
+::view-transition-new(.wave-13) {
+  --wave: 13;
+}
+::view-transition-group(.wave-14),
+::view-transition-old(.wave-14),
+::view-transition-new(.wave-14) {
+  --wave: 14;
+}
+::view-transition-group(.wave-15),
+::view-transition-old(.wave-15),
+::view-transition-new(.wave-15) {
+  --wave: 15;
+}
+::view-transition-group(.wave-16),
+::view-transition-old(.wave-16),
+::view-transition-new(.wave-16) {
+  --wave: 16;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation: none !important;
+  }
+  ::view-transition-old(*) {
+    animation: 150ms var(--ease-out) both fade-out !important;
+  }
+  ::view-transition-new(*) {
+    animation: 200ms var(--ease-out) both fade !important;
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}

@@ -1,0 +1,66 @@
+:root {
+  --duration-exit: 150ms;
+  --duration-enter: 250ms;
+  --duration-move: 300ms;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --enter-delay: calc(var(--duration-exit) / 2);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes blur-out {
+  to {
+    opacity: 0;
+    filter: blur(12px);
+  }
+}
+::view-transition-old(.blur-out) {
+  animation: var(--duration-exit) var(--ease-out) both blur-out;
+}
+::view-transition-new(.blur-in) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both
+    blur-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation: none !important;
+  }
+  ::view-transition-old(*) {
+    animation: 150ms var(--ease-out) both fade-out !important;
+  }
+  ::view-transition-new(*) {
+    animation: 200ms var(--ease-out) both fade !important;
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}
