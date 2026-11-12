@@ -620,6 +620,81 @@
   animation: 200ms var(--ease-out) 80ms both fade;
 }
 
+/* Homepage board (components/example-board.tsx). Switching the list between
+   Start here and Installation flips every row like a split-flap departure
+   board: the old content rolls out of its row as the new rolls in, clipped
+   to the row, one row after another (wave-N, 25ms apart). Up when moving
+   right along the tabs, down when moving back. Old and new run on the same
+   curve and duration so the two halves of the reel stay locked together. */
+::view-transition-group(.board-up),
+::view-transition-group(.board-down) {
+  overflow: clip;
+}
+::view-transition-old(.board-up) {
+  --slide-offset: 0 -100%;
+  animation: var(--duration-move) var(--ease-drawer)
+    calc(var(--wave, 0) * 25ms) both slide-out;
+}
+::view-transition-new(.board-up) {
+  --slide-offset: 0 100%;
+  animation: var(--duration-move) var(--ease-drawer)
+    calc(var(--wave, 0) * 25ms) both slide;
+}
+::view-transition-old(.board-down) {
+  --slide-offset: 0 100%;
+  animation: var(--duration-move) var(--ease-drawer)
+    calc(var(--wave, 0) * 25ms) both slide-out;
+}
+::view-transition-new(.board-down) {
+  --slide-offset: 0 -100%;
+  animation: var(--duration-move) var(--ease-drawer)
+    calc(var(--wave, 0) * 25ms) both slide;
+}
+
+/* Flip (app/flip). A card turning over in place: the old face turns away as
+   the new face turns in from behind, each hidden once it faces away
+   (backface-visibility), so exactly one face shows at a time. Old and new
+   share one curve and duration so the two halves stay locked, like the two
+   sides of a single card. flip-forward turns leftward (further along),
+   flip-back rightward. In the catalog each cell waits its wave-N turn
+   (20ms apart), so a new filter deals the grid card after card. */
+@keyframes flip-in {
+  from {
+    transform: perspective(1200px) rotateY(var(--flip-from));
+  }
+}
+@keyframes flip-out {
+  to {
+    transform: perspective(1200px) rotateY(var(--flip-to));
+  }
+}
+::view-transition-old(.flip-forward),
+::view-transition-new(.flip-forward),
+::view-transition-old(.flip-back),
+::view-transition-new(.flip-back) {
+  backface-visibility: hidden;
+}
+::view-transition-old(.flip-forward) {
+  --flip-to: -180deg;
+  animation: var(--duration-move) var(--ease-swap)
+    calc(var(--wave, 0) * 20ms) both flip-out;
+}
+::view-transition-new(.flip-forward) {
+  --flip-from: 180deg;
+  animation: var(--duration-move) var(--ease-swap)
+    calc(var(--wave, 0) * 20ms) both flip-in;
+}
+::view-transition-old(.flip-back) {
+  --flip-to: 180deg;
+  animation: var(--duration-move) var(--ease-swap)
+    calc(var(--wave, 0) * 20ms) both flip-out;
+}
+::view-transition-new(.flip-back) {
+  --flip-from: -180deg;
+  animation: var(--duration-move) var(--ease-swap)
+    calc(var(--wave, 0) * 20ms) both flip-in;
+}
+
 /* Reduced motion means gentler, not none: nothing moves, scales, slides or
    blurs, but every change still cross-fades quickly in place, so content
    never pops. Waves and delays are dropped. */

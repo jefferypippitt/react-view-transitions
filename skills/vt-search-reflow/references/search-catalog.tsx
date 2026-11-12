@@ -86,7 +86,7 @@ export function SearchCatalog() {
             onKeyDown={(event) => {
               if (event.key === "Escape") setQuery("")
             }}
-            className="font-mono text-xs tracking-wide uppercase placeholder:normal-case [&::-webkit-search-cancel-button]:appearance-none"
+            className="font-sans text-xs tracking-wide uppercase placeholder:normal-case [&::-webkit-search-cancel-button]:appearance-none"
           />
           {query && (
             <InputGroupAddon align="inline-end">

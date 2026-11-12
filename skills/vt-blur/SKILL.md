@@ -44,6 +44,7 @@ Other skills in this set, by the shape they need:
 - `vt-swap-roll`: one featured item beside a list
 - `vt-tuck-spill`: a list filtered by category chips or tabs
 - `vt-grow-shift-slide`: a grid of cards that can open in place
+- `vt-flip-deal`: a grid whose items change in place, or content that turns over
 
 Install any of them with `npx skills add https://github.com/jefferypippitt/react-view-transitions --skill <name>`.
 

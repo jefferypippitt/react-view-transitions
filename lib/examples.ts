@@ -40,6 +40,7 @@ export const examples: Example[] = [
     skill: "vt-grow-shift-slide",
   },
   { href: "/blur", transitions: ["Blur"], skill: "vt-blur" },
+  { href: "/flip", transitions: ["Flip", "Deal"], skill: "vt-flip-deal" },
 ]
 
 /** "'Morph' + 'Slide'", as shown on the homepage. */

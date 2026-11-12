@@ -29,6 +29,7 @@ import {
   isFilter,
   type Product,
   productImageSizes,
+  type Variant,
   variantAlt,
 } from "@/lib/media"
 import { cn } from "@/lib/utils"
@@ -48,19 +49,64 @@ const viewOptions = [
 
 const ViewContext = createContext<[View, (view: View) => void] | null>(null)
 
+type Colors = [
+  Record<string, string>,
+  React.Dispatch<React.SetStateAction<Record<string, string>>>,
+]
+
+const ColorContext = createContext<Colors | null>(null)
+
 export function StaggerViewProvider({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const state = useState<View>("grid")
-  return <ViewContext value={state}>{children}</ViewContext>
+  const view = useState<View>("grid")
+  const colors = useState<Record<string, string>>({})
+  return (
+    <ViewContext value={view}>
+      <ColorContext value={colors}>{children}</ColorContext>
+    </ViewContext>
+  )
 }
 
 function useStaggerView() {
   const state = use(ViewContext)
   if (!state) throw new Error("Missing <StaggerViewProvider>")
   return state
+}
+
+export function useStaggerColors() {
+  const state = use(ColorContext)
+  if (!state) throw new Error("Missing <StaggerViewProvider>")
+  const [colors, setColors] = state
+
+  function variantOf(product: Product): Variant {
+    return (
+      product.variants.find((v) => v.color === colors[product.id]) ??
+      product.variants[0]
+    )
+  }
+
+  function selectColor(product: Product, color: string) {
+    startTransition(() =>
+      setColors((current) => ({ ...current, [product.id]: color }))
+    )
+  }
+
+  return { variantOf, selectColor }
+}
+
+const swatches: Record<string, string> = {
+  Black: "#111111",
+  White: "#f4f4f2",
+  Gray: "#8b8b8b",
+  Tan: "#c9ae8c",
+  Brown: "#6b4a33",
+  Chocolate: "#4a2e21",
+  Coal: "#303030",
+  Green: "#4f5b3d",
+  Stealth: "#3b3e42",
 }
 
 const headerHeight = 48
@@ -221,7 +267,7 @@ function Photo({
   wave,
   sizeClass,
 }: ItemProps & { sizeClass: string }) {
-  const [variant] = product.variants
+  const variant = useStaggerColors().variantOf(product)
   return (
     <StaggerPart name={staggerPhotoName(product)} wave={wave}>
       <div
@@ -230,13 +276,20 @@ function Photo({
           sizeClass
         )}
       >
-        <Image
-          src={variant.src}
-          alt={variantAlt(product, variant)}
-          fill
-          sizes={productImageSizes}
-          className="object-contain p-[8%]"
-        />
+        <ViewTransition
+          key={variant.color}
+          enter="fade-in"
+          exit="fade-out"
+          default="none"
+        >
+          <Image
+            src={variant.src}
+            alt={variantAlt(product, variant)}
+            fill
+            sizes={productImageSizes}
+            className="object-contain p-[8%]"
+          />
+        </ViewTransition>
       </div>
     </StaggerPart>
   )
@@ -245,7 +298,52 @@ function Photo({
 function Name({ product, wave }: ItemProps) {
   return (
     <StaggerPart name={`stagger-name-${product.id}`} wave={wave} text>
-      <h2 className="w-fit max-w-full truncate font-medium">{`'${product.name}'`}</h2>
+      <h2 className="w-fit max-w-full min-w-0 truncate font-medium">{`'${product.name}'`}</h2>
+    </StaggerPart>
+  )
+}
+
+function Colors({ product, wave }: ItemProps) {
+  const { variantOf, selectColor } = useStaggerColors()
+  const current = variantOf(product)
+  const pickable = product.variants.length > 1
+
+  return (
+    <StaggerPart name={`stagger-colors-${product.id}`} wave={wave}>
+      <div
+        role="group"
+        aria-label={`${product.name} color`}
+        className="flex w-fit shrink-0 items-center"
+      >
+        {product.variants.map((variant) => {
+          const selected = variant === current
+          return (
+            <button
+              key={variant.color}
+              type="button"
+              aria-label={variant.color}
+              aria-pressed={selected}
+              title={variant.color}
+              disabled={!pickable}
+              onClick={() => {
+                if (!selected) selectColor(product, variant.color)
+              }}
+              className="group/swatch grid size-5 cursor-pointer place-items-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-default"
+            >
+              <span
+                style={{ backgroundColor: swatches[variant.color] }}
+                className={cn(
+                  "size-3 rounded-full border border-foreground/20 transition-[scale,box-shadow] duration-150 ease-out group-active/swatch:scale-[0.97]",
+                  pickable &&
+                    (selected
+                      ? "ring-1 ring-foreground ring-offset-2 ring-offset-background"
+                      : "group-hover/swatch:scale-110")
+                )}
+              />
+            </button>
+          )
+        })}
+      </div>
     </StaggerPart>
   )
 }
@@ -261,7 +359,7 @@ function Price({ product, wave }: ItemProps) {
 }
 
 function Quantity({ product, wave, size }: ItemProps & { size?: "xs" | "sm" }) {
-  const [variant] = product.variants
+  const variant = useStaggerColors().variantOf(product)
   return (
     <StaggerPart name={`stagger-quantity-${product.id}`} wave={wave}>
       <div className="w-fit">
@@ -278,7 +376,10 @@ function Quantity({ product, wave, size }: ItemProps & { size?: "xs" | "sm" }) {
 function GridCard({ product, wave }: ItemProps) {
   return (
     <article data-product={product.id} className="flex min-w-0 flex-col gap-3">
-      <Name product={product} wave={wave} />
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <Name product={product} wave={wave} />
+        <Colors product={product} wave={wave} />
+      </div>
       <Photo product={product} wave={wave} sizeClass="aspect-square w-full" />
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Price product={product} wave={wave} />
@@ -289,7 +390,7 @@ function GridCard({ product, wave }: ItemProps) {
 }
 
 function ListRow({ product, wave }: ItemProps) {
-  const colors = product.variants.length
+  const variant = useStaggerColors().variantOf(product)
   return (
     <li
       data-product={product.id}
@@ -303,14 +404,14 @@ function ListRow({ product, wave }: ItemProps) {
       <div className="flex min-w-0 flex-col gap-1">
         <Name product={product} wave={wave} />
         <span className="truncate text-muted-foreground">
-          {product.code} · {product.gender}
+          {product.code} · {variant.color}
         </span>
       </div>
-      <span className="hidden text-muted-foreground sm:inline">
-        {colors} {colors === 1 ? "color" : "colors"}
-      </span>
-      <div className="col-start-2 row-start-2 sm:col-start-auto sm:row-start-auto sm:w-28 sm:text-end">
-        <Price product={product} wave={wave} />
+      <div className="col-start-2 row-start-2 flex items-center gap-3 sm:contents">
+        <Colors product={product} wave={wave} />
+        <div className="sm:w-28 sm:text-end">
+          <Price product={product} wave={wave} />
+        </div>
       </div>
       <div className="col-start-3 row-span-2 row-start-1 justify-self-end sm:col-start-auto sm:row-span-1 sm:row-start-auto">
         <Quantity product={product} wave={wave} />
@@ -327,6 +428,7 @@ function DenseTile({ product, wave }: ItemProps) {
       className="flex min-w-0 flex-col gap-1.5"
     >
       <Photo product={product} wave={wave} sizeClass="aspect-square w-full" />
+      <Colors product={product} wave={wave} />
       <Price product={product} wave={wave} />
       <Quantity product={product} wave={wave} size="xs" />
     </article>

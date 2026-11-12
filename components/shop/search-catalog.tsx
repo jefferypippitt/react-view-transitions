@@ -102,7 +102,7 @@ export function SearchCatalog() {
             }}
             // Hides the browser's own clear button for search inputs: the
             // InputGroupButton below is the one clear control.
-            className="font-mono text-xs tracking-wide uppercase placeholder:normal-case [&::-webkit-search-cancel-button]:appearance-none"
+            className="font-sans text-xs tracking-wide uppercase placeholder:normal-case [&::-webkit-search-cancel-button]:appearance-none"
           />
           {query && (
             <InputGroupAddon align="inline-end">

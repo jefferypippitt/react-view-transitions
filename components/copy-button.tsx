@@ -18,8 +18,7 @@ export function CopyButton({ text, label }: { text: string; label: string }) {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
-    } catch {
-    }
+    } catch {}
   }
 
   const icon =

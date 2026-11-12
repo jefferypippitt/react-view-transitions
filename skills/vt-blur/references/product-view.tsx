@@ -1,12 +1,19 @@
 "use client"
 
 import Image from "next/image"
-import { startTransition, useState, ViewTransition } from "react"
+import {
+  addTransitionType,
+  startTransition,
+  useState,
+  ViewTransition,
+} from "react"
 
 import { QuantityStepper } from "@/components/shop/quantity-stepper"
 import { Separator } from "@/components/ui/separator"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { cartKey, formatPrice, type Product, variantAlt } from "@/lib/media"
+
+type PhotoClass = React.ComponentProps<typeof ViewTransition>["enter"]
 
 export function ProductView({
   product,
@@ -14,12 +21,24 @@ export function ProductView({
   exit = "fade-out",
 }: {
   product: Product
-  enter?: string
-  exit?: string
+  enter?: PhotoClass
+  exit?: PhotoClass
 }) {
   const [color, setColor] = useState(product.variants[0].color)
-  const variant =
-    product.variants.find((v) => v.color === color) ?? product.variants[0]
+  const index = Math.max(
+    0,
+    product.variants.findIndex((v) => v.color === color)
+  )
+  const variant = product.variants[index]!
+
+  function selectColor(next: string) {
+    const nextIndex = product.variants.findIndex((v) => v.color === next)
+    if (nextIndex === index) return
+    startTransition(() => {
+      addTransitionType(nextIndex > index ? "nav-forward" : "nav-back")
+      setColor(next)
+    })
+  }
 
   return (
     <div className="grid max-w-5xl gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-12">
@@ -61,7 +80,7 @@ export function ProductView({
               value={[variant.color]}
               onValueChange={(value) => {
                 const next = value[0]
-                if (next) startTransition(() => setColor(next))
+                if (next) selectColor(next)
               }}
               className="flex-wrap"
             >
