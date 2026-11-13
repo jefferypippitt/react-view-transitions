@@ -1,11 +1,10 @@
 /**
- * Products and color variants gathered for the demo (Nov 2026),
- * stored in public/media/products as 1200px WebP (resized from the originals).
- * Placeholder images — local demo use only, don't deploy or publish.
+ * Demo catalog. Original generated product shots live in
+ * public/media/products as 2048px square PNGs on white.
  *
- * Order, prices (USD), colors and gender tags are the site's. The site only
- * lists codes, so names are short descriptions of each shot. width/height are
- * the files' real pixel sizes. A product's first variant is its default.
+ * Codes follow {TYPE}-{MODEL}; filenames are {code}-{color}.png. Prices and
+ * gender tags are made up for the demo. width/height are the files' real
+ * pixel sizes. A product's first variant is its default.
  */
 export type Variant = {
   color: string
@@ -21,12 +20,12 @@ export type Product = {
   code: string
   name: string
   price: number
-  /** The site's own tag. Unisex items appear under both filters. */
+  /** Unisex items appear under both filters. */
   gender: Gender
   variants: [Variant, ...Variant[]]
 }
 
-function variant(color: string, file: string, width = 1200, height = width) {
+function variant(color: string, file: string, width = 2048, height = width) {
   return { color, src: `/media/products/${file}`, width, height } satisfies Variant
 }
 
@@ -48,122 +47,126 @@ function product(
 }
 
 export const products: Product[] = [
-  product("AB-01", "Boot", 120, "male", [variant("Black", "ab-01-black.webp")]),
-  product("800S", "Sneaker", 120, "male", [
-    variant("Stealth", "800s-stealth.webp"),
+  product("HZ-20", "Zip Hoodie", 90, "male", [
+    variant("Black", "hz-20-black.png"),
   ]),
-  product("YS-02", "Slide 2", 50, "unisex", [
-    variant("Coal", "ys-02-coal.webp"),
-    variant("Brown", "ys-02-brown.webp"),
+  product("SD-20", "Slide", 50, "unisex", [
+    variant("Black", "sd-20-black.png"),
+    variant("Umber", "sd-20-umber.png"),
   ]),
-  product("LS-03", "Base Long Sleeve", 20, "male", [
-    variant("White", "ls-03-white.webp"),
-    variant("Black", "ls-03-black.webp"),
+  product("TE-20", "3 Pack Tee", 45, "male", [
+    variant("Black", "te-20-black.png"),
+    variant("Bone", "te-20-bone.png"),
+    variant("Clay", "te-20-clay.png"),
+    variant("Moss", "te-20-moss.png"),
   ]),
-  product("SG-03", "Sunglasses", 20, "unisex", [
-    variant("Black", "sg-03-black.webp", 899, 1200),
+  product("RP-20", "Romper", 70, "female", [
+    variant("Black", "rp-20-black.png"),
   ]),
-  product("BP-02", "Backpack", 40, "unisex", [
-    variant("Black", "bp-02-black.webp"),
+  product("RN-20", "Runner", 140, "male", [
+    variant("Shade", "rn-20-shade.png"),
   ]),
-  product("TS-03", "3 Pack Shrunken Tee", 40, "male", [
-    variant("Brown", "ts-03-brown.webp"),
-    variant("Black", "ts-03-black.webp"),
-    variant("Green", "ts-03-green.webp"),
-    variant("White", "ts-03-white.webp"),
+  product("GL-20", "Sunglasses", 40, "unisex", [
+    variant("Black", "gl-20-black.png"),
   ]),
-  product("YS-01", "Slide", 40, "unisex", [
-    variant("Chocolate", "ys-01-chocolate.webp"),
-    variant("Black", "ys-01-black.webp"),
+  product("LV-20", "Long Sleeve", 35, "male", [
+    variant("Black", "lv-20-black.png"),
+    variant("Bone", "lv-20-bone.png"),
   ]),
-  product("TT-06", "3 Pack Base Tank", 40, "male", [
-    variant("Black", "tt-06-black.webp"),
+  product("TB-20", "Long Tube Top", 30, "female", [
+    variant("Black", "tb-20-black.png"),
   ]),
-  product("BD-10", "Short Sleeve Bodysuit", 40, "female", [
-    variant("Black", "bd-10-black.webp"),
+  product("PK-20", "Roll-Top Pack", 80, "unisex", [
+    variant("Black", "pk-20-black.png"),
   ]),
-  product("WJ-02", "Track Jacket", 40, "female", [
-    variant("Black", "wj-02-black.webp"),
+  product("SW-20", "Sweatpant", 70, "male", [
+    variant("Black", "sw-20-black.png"),
+    variant("Bone", "sw-20-bone.png"),
+    variant("Stone", "sw-20-stone.png"),
   ]),
-  product("PT-05", "Wide Pant", 40, "male", [
-    variant("Black", "pt-05-black.webp"),
+  product("SU-20", "Cami Bodysuit", 45, "female", [
+    variant("Black", "su-20-black.png"),
   ]),
-  product("LG-14", "Ankle Legging", 40, "female", [
-    variant("Black", "lg-14-black.webp"),
+  product("JK-20", "Track Jacket", 95, "female", [
+    variant("Black", "jk-20-black.png"),
   ]),
-  product("BX-01", "3 Pack Boxer", 40, "male", [
-    variant("Black", "bx-01-black.webp"),
+  product("SD-21", "Slide 2", 60, "unisex", [
+    variant("Clay", "sd-21-clay.png"),
+    variant("Ink", "sd-21-ink.png"),
   ]),
-  product("PT-04", "Straight Pant", 40, "male", [
-    variant("Black", "pt-04-black.webp"),
+  product("WN-20", "Windbreaker", 110, "male", [
+    variant("Black", "wn-20-black.png"),
+    variant("Stone", "wn-20-stone.png"),
   ]),
-  product("SP-06", "Sweatpant", 40, "male", [
-    variant("White", "sp-06-white.webp", 1024, 1024),
-    variant("Gray", "sp-06-gray.webp"),
-    variant("Black", "sp-06-black.webp", 1024, 1024),
+  product("LN-23", "Legging", 50, "female", [
+    variant("Black", "ln-23-black.png"),
   ]),
-  product("KP-01", "Thong", 30, "female", [
-    variant("White", "kp-01-white.webp"),
-    variant("Black", "kp-01-black.webp"),
-    variant("Tan", "kp-01-tan.webp"),
+  product("BT-20", "Ankle Boot", 160, "male", [
+    variant("Black", "bt-20-black.png"),
   ]),
-  product("KS-01", "Boy Short", 40, "female", [
-    variant("White", "ks-01-white.webp"),
-    variant("Black", "ks-01-black.webp"),
-    variant("Tan", "ks-01-tan.webp"),
+  product("TE-21", "Fitted Tee", 30, "female", [
+    variant("Black", "te-21-black.png"),
   ]),
-  product("SK-01", "3 Pack Sock", 20, "unisex", [
-    variant("White", "sk-01-white.webp"),
-    variant("Gray", "sk-01-gray.webp"),
-    variant("Black", "sk-01-black.webp"),
+  product("PN-20", "Baggy Pant", 85, "male", [
+    variant("Black", "pn-20-black.png"),
   ]),
-  product("WB-01", "Windbreaker", 40, "male", [
-    variant("Gray", "wb-01-gray.webp"),
-    variant("Black", "wb-01-black.webp"),
+  product("KB-20", "Knee-High Boot", 190, "female", [
+    variant("Black", "kb-20-black.png"),
   ]),
-  product("SH-01", "Short", 20, "male", [
-    variant("Gray", "sh-01-gray.webp"),
-    variant("Black", "sh-01-black.webp"),
+  product("SC-20", "3 Pack Sock", 25, "unisex", [
+    variant("Black", "sc-20-black.png"),
+    variant("Bone", "sc-20-bone.png"),
+    variant("Stone", "sc-20-stone.png"),
   ]),
-  product("TS-04", "Fitted Tee", 20, "female", [
-    variant("Black", "ts-04-black.webp"),
+  product("NS-20", "Nylon Short", 45, "male", [
+    variant("Black", "ns-20-black.png"),
+    variant("Stone", "ns-20-stone.png"),
   ]),
-  product("BD-03", "Bodysuit", 20, "female", [
-    variant("Black", "bd-03-black.webp"),
+  product("BA-20", "Bralette", 30, "female", [
+    variant("Black", "ba-20-black.png"),
   ]),
-  product("BD-04", "Long Bodysuit", 40, "female", [
-    variant("Black", "bd-04-black.webp"),
+  product("TK-20", "3 Pack Tank", 40, "male", [
+    variant("Black", "tk-20-black.png"),
   ]),
-  product("HD-03", "Zip Hoodie", 40, "male", [
-    variant("Black", "hd-03-black.webp"),
+  product("LN-22", "Yoga Legging", 55, "female", [
+    variant("Black", "ln-22-black.png"),
   ]),
-  product("TT-02", "Tube Top", 20, "female", [
-    variant("Black", "tt-02-black.webp"),
+  product("MU-20", "Mule", 90, "unisex", [
+    variant("Black", "mu-20-black.png"),
   ]),
-  product("TT-04", "Bandeau", 20, "female", [
-    variant("Black", "tt-04-black.webp"),
+  product("PN-21", "Straight Pant", 80, "male", [
+    variant("Black", "pn-21-black.png"),
   ]),
-  product("BR-09", "Bra", 20, "female", [variant("Black", "br-09-black.webp")]),
-  product("SH-06", "Mini Short", 20, "female", [
-    variant("Black", "sh-06-black.webp"),
+  product("SU-21", "Footed Jumpsuit", 75, "female", [
+    variant("Black", "su-21-black.png"),
   ]),
-  product("LG-01", "Footed Legging", 40, "female", [
-    variant("Black", "lg-01-black.webp"),
+  product("PK-21", "Zip Backpack", 90, "unisex", [
+    variant("Black", "pk-21-black.png"),
   ]),
-  product("LG-04", "Flare Legging", 40, "female", [
-    variant("Black", "lg-04-black.webp"),
+  product("BB-20", "3 Pack Boxer Brief", 35, "male", [
+    variant("Black", "bb-20-black.png"),
   ]),
-  product("LG-13", "Legging", 40, "female", [
-    variant("Black", "lg-13-black.webp"),
+  product("TB-21", "Short Tube Top", 25, "female", [
+    variant("Black", "tb-21-black.png"),
   ]),
-  product("HL-03", "Heel", 60, "female", [
-    variant("Black", "hl-03-black.webp"),
+  product("PY-20", "Mid-Rise Brief", 20, "female", [
+    variant("Black", "py-20-black.png"),
+    variant("Bone", "py-20-bone.png"),
+    variant("Sand", "py-20-sand.png"),
   ]),
-  product("HB-01", "Heel Boot", 100, "female", [
-    variant("Black", "hb-01-black.webp"),
+  product("LN-20", "Capri Legging", 45, "female", [
+    variant("Black", "ln-20-black.png"),
   ]),
-  product("BP-01", "Roll-Top Bag", 40, "unisex", [
-    variant("Black", "bp-01-black.webp"),
+  product("WS-20", "Shortie Brief", 20, "female", [
+    variant("Black", "ws-20-black.png"),
+    variant("Bone", "ws-20-bone.png"),
+    variant("Sand", "ws-20-sand.png"),
+  ]),
+  product("BS-20", "Boy Short", 25, "female", [
+    variant("Black", "bs-20-black.png"),
+  ]),
+  product("LN-21", "Footed Legging", 50, "female", [
+    variant("Black", "ln-21-black.png"),
   ]),
 ]
 

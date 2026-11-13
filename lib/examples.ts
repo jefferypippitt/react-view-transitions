@@ -41,6 +41,11 @@ export const examples: Example[] = [
   },
   { href: "/blur", transitions: ["Blur"], skill: "vt-blur" },
   { href: "/flip", transitions: ["Flip", "Deal"], skill: "vt-flip-deal" },
+  {
+    href: "/wipe",
+    transitions: ["Wipe", "Dive", "Stack", "Cover"],
+    skill: "vt-wipe-dive-stack-cover",
+  },
 ]
 
 /** "'Morph' + 'Slide'", as shown on the homepage. */

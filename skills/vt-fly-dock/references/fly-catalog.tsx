@@ -274,9 +274,8 @@ function Dock({
   return (
     <aside
       aria-label="Bag"
-      className="fixed inset-x-6 bottom-6 z-20 flex items-center gap-4 rounded-lg border bg-background p-2 ps-4 shadow-lg"
+      className="fixed inset-x-6 bottom-6 z-20 flex items-center gap-4 rounded-lg border bg-background p-2 shadow-lg"
     >
-      <span className="shrink-0 font-medium">Bag</span>
       <div className="flex min-w-0 flex-1 items-center gap-2">
         {edges.overflow && (
           <ScrollButton

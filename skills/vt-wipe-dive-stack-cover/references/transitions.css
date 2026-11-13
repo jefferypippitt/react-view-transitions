@@ -1,0 +1,243 @@
+/* Wipe + Dive + Stack + Cover. Map these tokens to the app's own if it
+   already has motion tokens. */
+:root {
+  --duration-exit: 150ms;
+  --duration-enter: 250ms;
+  --duration-move: 300ms;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-swap: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --enter-delay: calc(var(--duration-exit) / 2);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+@keyframes slide-out {
+  to {
+    translate: var(--slide-offset);
+  }
+}
+
+/* Shared photo morph (list visual <-> detail visual). */
+::view-transition-group(.morph) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: var(--ease-drawer);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* Wipe + Dive + Stack + Cover (app/wipe). Four transitions, one per part
+   of the shop. */
+
+/* Wipe: a filter change. The grid's old and new boundaries sit in the same
+   box, and one moving edge clips both: the new set is uncovered as the old
+   one is wiped off, rightward for wipe-forward and leftward for wipe-back.
+   Both halves share one curve and duration, so the edge stays a single
+   line. */
+@keyframes wipe-in-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes wipe-out-right {
+  from {
+    clip-path: inset(0);
+  }
+  to {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+@keyframes wipe-in-left {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes wipe-out-left {
+  from {
+    clip-path: inset(0);
+  }
+  to {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+::view-transition-new(.wipe-forward) {
+  animation: var(--duration-move) var(--ease-swap) both wipe-in-right;
+}
+::view-transition-old(.wipe-forward) {
+  animation: var(--duration-move) var(--ease-swap) both wipe-out-right;
+}
+::view-transition-new(.wipe-back) {
+  animation: var(--duration-move) var(--ease-swap) both wipe-in-left;
+}
+::view-transition-old(.wipe-back) {
+  animation: var(--duration-move) var(--ease-swap) both wipe-out-left;
+}
+
+/* Dive: opening a product moves the whole page in depth. No boundary owns
+   the page, so these rules style the root snapshot, scoped to the
+   transition's type. Going in, the grid swells past the viewer as the
+   product page comes up from behind; coming back out, the reverse. The
+   photo morphs above it all (.morph), the header stays pinned. */
+@keyframes dive-past {
+  to {
+    opacity: 0;
+    scale: 1.06;
+  }
+}
+@keyframes dive-arrive {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+@keyframes dive-recede {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+@keyframes dive-return {
+  from {
+    opacity: 0;
+    scale: 1.06;
+  }
+}
+:root:active-view-transition-type(dive-in)::view-transition-old(root) {
+  animation: var(--duration-exit) var(--ease-out) both dive-past;
+}
+:root:active-view-transition-type(dive-in)::view-transition-new(root) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both
+    dive-arrive;
+}
+:root:active-view-transition-type(dive-out)::view-transition-old(root) {
+  animation: var(--duration-exit) var(--ease-out) both dive-recede;
+}
+:root:active-view-transition-type(dive-out)::view-transition-new(root) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both
+    dive-return;
+}
+
+/* Stack: picking a color. The new shot slides in over the old one, which
+   sinks back beneath it, each clipped to the photo box. From the right for
+   stack-forward, from the left for stack-back. */
+::view-transition-group(.stack-forward),
+::view-transition-group(.stack-back) {
+  overflow: clip;
+}
+@keyframes stack-sink {
+  to {
+    opacity: 0.4;
+    scale: 0.92;
+  }
+}
+::view-transition-old(.stack-forward),
+::view-transition-old(.stack-back) {
+  animation: var(--duration-move) var(--ease-out) both stack-sink;
+}
+::view-transition-new(.stack-forward) {
+  --slide-offset: 100%;
+  animation: var(--duration-move) var(--ease-drawer) both slide;
+}
+::view-transition-new(.stack-back) {
+  --slide-offset: -100%;
+  animation: var(--duration-move) var(--ease-drawer) both slide;
+}
+
+/* Cover: the bag opens checkout as a sheet. The checkout page's boundary
+   rises from below the screen (cover-in) while the page under it sinks
+   back (the root, by type). Back drops the sheet away, faster than it
+   came (cover-out), and the page comes forward again. The sheet rides
+   above the root, under the pinned header. */
+::view-transition-group(.cover-in),
+::view-transition-group(.cover-out) {
+  z-index: 50;
+}
+::view-transition-new(.cover-in) {
+  --slide-offset: 0 100vh;
+  animation: var(--duration-move) var(--ease-drawer) both slide;
+}
+::view-transition-old(.cover-out) {
+  --slide-offset: 0 100vh;
+  animation: 200ms var(--ease-drawer) both slide-out;
+}
+@keyframes cover-sink {
+  to {
+    opacity: 0.5;
+    scale: 0.96;
+  }
+}
+@keyframes cover-lift {
+  from {
+    opacity: 0.5;
+    scale: 0.96;
+  }
+}
+/* Opening: the old root is the page left behind; the new root holds only
+   the background (the sheet is its own group), so it stays hidden until
+   the sheet has landed. */
+:root:active-view-transition-type(cover-open)::view-transition-old(root) {
+  animation: var(--duration-move) var(--ease-out) both cover-sink;
+}
+:root:active-view-transition-type(cover-open)::view-transition-new(root) {
+  animation: none;
+  opacity: 0;
+}
+/* Closing: the reverse. The old root is the empty background behind the
+   sheet; the page under it comes forward. */
+:root:active-view-transition-type(cover-close)::view-transition-old(root) {
+  animation: none;
+  opacity: 0;
+}
+:root:active-view-transition-type(cover-close)::view-transition-new(root) {
+  animation: var(--duration-move) var(--ease-out) both cover-lift;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation: none !important;
+  }
+  ::view-transition-old(*) {
+    animation: 150ms var(--ease-out) both fade-out !important;
+  }
+  ::view-transition-new(*) {
+    animation: 200ms var(--ease-out) both fade !important;
+  }
+}
+
+::view-transition {
+  pointer-events: none;
+}

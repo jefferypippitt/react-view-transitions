@@ -19,6 +19,7 @@ export function ProductView({
   product,
   enter = "fade-in",
   exit = "fade-out",
+  photoName,
 }: {
   product: Product
   /**
@@ -28,6 +29,11 @@ export function ProductView({
    */
   enter?: PhotoClass
   exit?: PhotoClass
+  /**
+   * Shared-element name for the photo box, to pair it with a grid card's
+   * photo (share="morph"). Omit it and the photo has no name.
+   */
+  photoName?: string
 }) {
   const [color, setColor] = useState(product.variants[0].color)
   const index = Math.max(
@@ -46,28 +52,40 @@ export function ProductView({
     })
   }
 
+  const photo = (
+    <div className="relative aspect-square overflow-hidden bg-product">
+      {/* Keyed by color: picking a color swaps this subtree, so the old
+          shot exits and the new one enters with the same animation as
+          pages. */}
+      <ViewTransition
+        key={variant.color}
+        enter={enter}
+        exit={exit}
+        default="none"
+      >
+        <Image
+          src={variant.src}
+          alt={variantAlt(product, variant)}
+          fill
+          preload
+          sizes="(min-width: 768px) 50vw, 100vw"
+          // Opaque, like the box: a shot that slides over another must
+          // cover it, padding included.
+          className="bg-product object-contain p-10"
+        />
+      </ViewTransition>
+    </div>
+  )
+
   return (
     <div className="grid max-w-5xl gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-12">
-      <div className="relative aspect-square overflow-hidden bg-product">
-        {/* Keyed by color: picking a color swaps this subtree, so the old
-            shot exits and the new one enters with the same animation as
-            pages. */}
-        <ViewTransition
-          key={variant.color}
-          enter={enter}
-          exit={exit}
-          default="none"
-        >
-          <Image
-            src={variant.src}
-            alt={variantAlt(product, variant)}
-            fill
-            preload
-            sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-contain p-10"
-          />
+      {photoName ? (
+        <ViewTransition name={photoName} share="morph" default="none">
+          {photo}
         </ViewTransition>
-      </div>
+      ) : (
+        photo
+      )}
       <div className="flex flex-col gap-6 md:pt-2">
         <div className="flex flex-col gap-2">
           <h1 className="text-sm font-semibold">{`'${product.name}'`}</h1>

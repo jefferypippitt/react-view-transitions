@@ -99,14 +99,14 @@ export function useStaggerColors() {
 
 const swatches: Record<string, string> = {
   Black: "#111111",
-  White: "#f4f4f2",
-  Gray: "#8b8b8b",
-  Tan: "#c9ae8c",
-  Brown: "#6b4a33",
-  Chocolate: "#4a2e21",
-  Coal: "#303030",
-  Green: "#4f5b3d",
-  Stealth: "#3b3e42",
+  Bone: "#f3f2ee",
+  Stone: "#86837d",
+  Clay: "#6e5542",
+  Moss: "#8a866c",
+  Umber: "#4b3f3b",
+  Ink: "#2b2c30",
+  Shade: "#1c1c1c",
+  Sand: "#c8b294",
 }
 
 const headerHeight = 48
