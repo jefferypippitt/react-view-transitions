@@ -26,7 +26,12 @@ export type Product = {
 }
 
 function variant(color: string, file: string, width = 2048, height = width) {
-  return { color, src: `/media/products/${file}`, width, height } satisfies Variant
+  return {
+    color,
+    src: `/media/products/${file}`,
+    width,
+    height,
+  } satisfies Variant
 }
 
 function product(
@@ -131,9 +136,7 @@ export const products: Product[] = [
   product("LN-22", "Yoga Legging", 55, "female", [
     variant("Black", "ln-22-black.png"),
   ]),
-  product("MU-20", "Mule", 90, "unisex", [
-    variant("Black", "mu-20-black.png"),
-  ]),
+  product("MU-20", "Mule", 90, "unisex", [variant("Black", "mu-20-black.png")]),
   product("PN-21", "Straight Pant", 80, "male", [
     variant("Black", "pn-21-black.png"),
   ]),
@@ -221,3 +224,12 @@ export function getCartLine(key: string) {
  */
 export const productImageSizes =
   "(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
+
+/**
+ * `sizes` for the product page's photo. Cards linking there preload the
+ * photo with it on hover, so it must match the page's <ProductImage>.
+ */
+export const productHeroSizes = "(min-width: 768px) 50vw, 100vw"
+
+/** `sizes` for the quick view's photo (Expand), preloaded the same way. */
+export const quickViewImageSizes = "(min-width: 576px) 528px, 100vw"

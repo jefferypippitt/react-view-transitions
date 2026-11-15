@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { preloadOnIntent, ProductImage } from "@/components/shop/product-image"
 import {
   addTransitionType,
   startTransition,
@@ -22,6 +22,7 @@ import {
   getProducts,
   isFilter,
   type Product,
+  quickViewImageSizes,
   products,
   variantAlt,
 } from "@/lib/media"
@@ -162,6 +163,7 @@ function ProductCard({
         type="button"
         aria-haspopup="dialog"
         onClick={onOpen}
+        {...preloadOnIntent(variant.src, quickViewImageSizes)}
         className="group flex cursor-pointer flex-col gap-3 text-start tracking-wide uppercase outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
       >
         <h2 className="truncate font-medium">{`'${product.name}'`}</h2>
@@ -176,7 +178,7 @@ function ProductCard({
               dimmed && "opacity-30"
             )}
           >
-            <Image
+            <ProductImage
               src={variant.src}
               alt={variantAlt(product, variant)}
               fill

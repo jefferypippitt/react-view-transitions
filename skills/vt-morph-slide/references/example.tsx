@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import {
   addTransitionType,
@@ -9,7 +8,17 @@ import {
   ViewTransition,
 } from "react"
 
+import {
+  preloadOnIntent,
+  preloadPhotos,
+  ProductImage,
+} from "@/components/product-image"
 import { SlideTransition } from "@/components/slide-transition"
+
+// Each image slot's rendered size. Preloads must use the same `sizes` as
+// the image they warm up, so the browser picks the same srcset file.
+const cardSizes = "(min-width: 768px) 25vw, 50vw"
+const detailSizes = "(min-width: 768px) 50vw, 100vw"
 
 type Variant = { label: string; src: string }
 type Item = { id: string; name: string; category: string; variants: Variant[] }
@@ -55,15 +64,20 @@ function ItemCard({ item }: { item: Item }) {
   const [variant] = item.variants
 
   return (
-    <Link href={`/items/${item.id}`} transitionTypes={["nav-forward"]}>
+    <Link
+      href={`/items/${item.id}`}
+      transitionTypes={["nav-forward"]}
+      // Start fetching the detail image on hover or focus.
+      {...preloadOnIntent(variant.src, detailSizes)}
+    >
       <h2>{item.name}</h2>
       <ViewTransition name={`item-${item.id}`} share="morph" default="none">
         <div className="relative aspect-square overflow-hidden">
-          <Image
+          <ProductImage
             src={variant.src}
             alt={item.name}
             fill
-            sizes="(min-width: 768px) 25vw, 50vw"
+            sizes={cardSizes}
             className="object-contain p-[8%]"
           />
         </div>
@@ -75,6 +89,12 @@ function ItemCard({ item }: { item: Item }) {
 export function ItemDetail({ item }: { item: Item }) {
   const [index, setIndex] = useState(0)
   const variant = item.variants[index]!
+
+  // The other variants, at the detail size: switching swaps at once.
+  preloadPhotos(
+    item.variants.filter((v) => v !== variant).map((v) => v.src),
+    detailSizes
+  )
 
   function selectVariant(next: number) {
     if (next === index) return
@@ -89,12 +109,12 @@ export function ItemDetail({ item }: { item: Item }) {
       <ViewTransition name={`item-${item.id}`} share="morph" default="none">
         <div className="relative aspect-square overflow-hidden">
           <SlideTransition key={variant.label}>
-            <Image
+            <ProductImage
               src={variant.src}
               alt={`${item.name}, ${variant.label}`}
               fill
               preload
-              sizes="(min-width: 768px) 50vw, 100vw"
+              sizes={detailSizes}
               className="object-contain p-[8%]"
             />
           </SlideTransition>

@@ -60,6 +60,7 @@ Install any of them with `npx skills add https://github.com/jefferypippitt/react
 
 - `references/transitions.css`: tokens, keyframes and the `blur-in` / `blur-out` classes.
 - `references/catalog.tsx`, `references/product-view.tsx`: the demo's grid and detail view. The demo passes `enter="blur-in" exit="blur-out"` to both.
+- `references/product-image.tsx`: `ProductImage`, a drop-in for Next.js `<Image>` that never blinks in a transition, plus `preloadOnIntent` and `preloadPhotos` (see Gotchas). Outside Next.js, keep a plain `<img>`.
 
 The `.tsx` files are copied from the demo shop, where products stand in for the app's items. `QuantityStepper`, `@/lib/media`, the cart and the `ToggleGroup` UI are shop-only. Port only the `<ViewTransition>` wiring.
 
@@ -105,6 +106,7 @@ Key a boundary by the selection, inside the region that stays, and update it in 
 
 ## Gotchas
 
+- **Images can blink in.** During a Transition, React waits for each newly mounted `<img>` to load and decode (up to about 800ms) before the new snapshot is taken, but only for an `<img>` that has no `onLoad` handler and isn't `loading="lazy"`. Any other image can be snapshotted blank and pop in mid-animation. So don't lazy-load images a transition mounts, and don't give them `onLoad`. Next.js's `<Image>` always attaches its own `onLoad`: render a plain `<img>` with `getImageProps()` from `next/image` instead, which gives the same optimized `src` / `srcSet` / `sizes`. `references/product-image.tsx` is that as a drop-in (`ProductImage`). To skip the wait as well, preload the bigger image when the user points at or focuses whatever opens it (`preload(src, { as: "image", imageSrcSet, imageSizes })` from `react-dom`, on `pointerenter` and `focus`), which `preloadOnIntent` in the same file does,, with the same `sizes` as the image that will show it, so the browser picks the same file.
 - `filter: blur()` is costly on very large areas. Keep it to page content and panels, not full-bleed video or canvas.
 - A plain `setState` never animates. Wrap updates in `startTransition`.
 - Keyboard shortcuts stay outside Transitions so they're instant.

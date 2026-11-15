@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ProductImage } from "@/components/shop/product-image"
 import Link from "next/link"
 import {
   RiArrowLeftSLine,
@@ -83,7 +83,7 @@ export function FlyCopy({
   return (
     <ViewTransition key={name} name={name} share="fly" default="none">
       <div aria-hidden className="absolute inset-0">
-        <Image
+        <ProductImage
           src={src}
           alt=""
           fill
@@ -219,7 +219,7 @@ function ProductCard({
         className="group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
       >
         <div className="relative aspect-square overflow-hidden bg-product">
-          <Image
+          <ProductImage
             src={variant.src}
             alt={variantAlt(product, variant)}
             fill
@@ -362,7 +362,7 @@ function Dock({
                     className="group/thumb relative block cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                   >
                     <div className="relative size-14 overflow-hidden bg-product">
-                      <Image
+                      <ProductImage
                         src={line.variant.src}
                         alt=""
                         fill

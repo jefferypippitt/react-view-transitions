@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ProductImage } from "@/components/shop/product-image"
 import { RiCloseLine, RiSearchLine } from "@remixicon/react"
 import { useDeferredValue, useState, ViewTransition } from "react"
 
@@ -153,7 +153,7 @@ function ProductCard({ product, query }: { product: Product; query: string }) {
         {"'"}
       </h2>
       <div className="relative aspect-square overflow-hidden bg-product">
-        <Image
+        <ProductImage
           src={variant.src}
           alt={variantAlt(product, variant)}
           fill

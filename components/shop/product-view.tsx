@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { preloadPhotos, ProductImage } from "@/components/shop/product-image"
 import {
   addTransitionType,
   startTransition,
@@ -11,7 +11,13 @@ import {
 import { QuantityStepper } from "@/components/shop/quantity-stepper"
 import { Separator } from "@/components/ui/separator"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { cartKey, formatPrice, type Product, variantAlt } from "@/lib/media"
+import {
+  cartKey,
+  formatPrice,
+  productHeroSizes,
+  type Product,
+  variantAlt,
+} from "@/lib/media"
 
 type PhotoClass = React.ComponentProps<typeof ViewTransition>["enter"]
 
@@ -42,6 +48,13 @@ export function ProductView({
   )
   const variant = product.variants[index]!
 
+  // The other colors, fetched now at the photo's size: picking one swaps
+  // at once instead of holding the transition while it loads.
+  preloadPhotos(
+    product.variants.filter((v) => v !== variant).map((v) => v.src),
+    productHeroSizes
+  )
+
   function selectColor(next: string) {
     const nextIndex = product.variants.findIndex((v) => v.color === next)
     if (nextIndex === index) return
@@ -63,12 +76,12 @@ export function ProductView({
         exit={exit}
         default="none"
       >
-        <Image
+        <ProductImage
           src={variant.src}
           alt={variantAlt(product, variant)}
           fill
           preload
-          sizes="(min-width: 768px) 50vw, 100vw"
+          sizes={productHeroSizes}
           // Opaque, like the box: a shot that slides over another must
           // cover it, padding included.
           className="bg-product object-contain p-10"

@@ -65,6 +65,7 @@ Install any of them with `npx skills add https://github.com/jefferypippitt/react
 - `references/transitions.css`: tokens, `nav-forward` / `nav-back` slides, the `grow` visual morph, `grow-card` and `shift`.
 - `references/grow-catalog.tsx`: `openCard`, `selectColor`, the per-card boundary, `Card`, `OpenTile` and focus handling.
 - `references/slide-transition.tsx`: the directional slide used for ordered swaps.
+- `references/product-image.tsx`: `ProductImage`, a drop-in for Next.js `<Image>` that never blinks in a transition, plus `preloadOnIntent` and `preloadPhotos` (see Gotchas). Outside Next.js, keep a plain `<img>`.
 
 The `.tsx` files are copied from the demo shop, where products stand in for the app's items. `QuantityStepper`, `@/lib/media`, the UI kit and the filter are shop-only.
 
@@ -159,7 +160,8 @@ Then use `share="morph-text"` in place of the image class on that boundary.
 
 ## Gotchas
 
-- **Images must be ready for the new snapshot.** If the card and tile load different image sizes (`srcset`), the bigger one may be blank when snapshotted. In Next.js the demo uses `unoptimized` + `loading="eager"` on `next/image`. Elsewhere, use the same `src` in both and don't lazy-load. Non-image visuals don't have this problem.
+- **Images can blink in.** During a Transition, React waits for each newly mounted `<img>` to load and decode (up to about 800ms) before the new snapshot is taken, but only for an `<img>` that has no `onLoad` handler and isn't `loading="lazy"`. Any other image can be snapshotted blank and pop in mid-animation. So don't lazy-load images a transition mounts, and don't give them `onLoad`. Next.js's `<Image>` always attaches its own `onLoad`: render a plain `<img>` with `getImageProps()` from `next/image` instead, which gives the same optimized `src` / `srcSet` / `sizes`. `references/product-image.tsx` is that as a drop-in (`ProductImage`). To skip the wait as well, preload the bigger image when the user points at or focuses whatever opens it (`preload(src, { as: "image", imageSrcSet, imageSizes })` from `react-dom`, on `pointerenter` and `focus`), which `preloadOnIntent` in the same file does,, with the same `sizes` as the image that will show it, so the browser picks the same file.
+- **Images must be ready for the new snapshot.** If the card and tile load different image sizes (`srcset`), the bigger one may be blank when snapshotted. In Next.js the demo uses `unoptimized` + `loading="eager"` on `ProductImage`. Elsewhere, use the same `src` in both and don't lazy-load. Non-image visuals don't have this problem.
 - `grow-card` keeps both snapshots unscaled and pinned top-left inside a clipping group, so card text never stretches.
 - Other updates (filters, counts) aren't typed `grow`, so they don't move the cards.
 

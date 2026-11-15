@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { preloadPhotos, ProductImage } from "@/components/shop/product-image"
 import {
   addTransitionType,
   startTransition,
@@ -12,7 +12,13 @@ import { QuantityStepper } from "@/components/shop/quantity-stepper"
 import { SlideTransition } from "@/components/slide-transition"
 import { Separator } from "@/components/ui/separator"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { cartKey, formatPrice, type Product, variantAlt } from "@/lib/media"
+import {
+  cartKey,
+  formatPrice,
+  productHeroSizes,
+  type Product,
+  variantAlt,
+} from "@/lib/media"
 
 export function MorphProductView({ product }: { product: Product }) {
   const [color, setColor] = useState(product.variants[0].color)
@@ -21,6 +27,13 @@ export function MorphProductView({ product }: { product: Product }) {
     product.variants.findIndex((v) => v.color === color)
   )
   const variant = product.variants[index]!
+
+  // The other colors, fetched now at the photo's size: picking one swaps
+  // at once instead of holding the transition while it loads.
+  preloadPhotos(
+    product.variants.filter((v) => v !== variant).map((v) => v.src),
+    productHeroSizes
+  )
 
   function selectColor(next: string) {
     const nextIndex = product.variants.findIndex((v) => v.color === next)
@@ -45,12 +58,12 @@ export function MorphProductView({ product }: { product: Product }) {
           {/* Keyed by color: picking a color swaps this subtree, so the old
               shot slides out and the new one slides in. */}
           <SlideTransition key={variant.color}>
-            <Image
+            <ProductImage
               src={variant.src}
               alt={variantAlt(product, variant)}
               fill
               preload
-              sizes="(min-width: 768px) 50vw, 100vw"
+              sizes={productHeroSizes}
               className="object-contain p-[8%]"
             />
           </SlideTransition>

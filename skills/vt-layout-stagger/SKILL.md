@@ -59,6 +59,7 @@ Install any of them with `npx skills add https://github.com/jefferypippitt/react
 - `references/transitions.css`: tokens, `layout` / `layout-text` morphs and `wave-1` … `wave-16`.
 - `references/stagger-catalog.tsx`: `StaggerPart`, `switchView`, the scroll anchor and the three views.
 - `references/stagger-checkout.tsx`: how a later page reuses the visual names (optional).
+- `references/product-image.tsx`: `ProductImage`, a drop-in for Next.js `<Image>` that never blinks in a transition, plus `preloadOnIntent` and `preloadPhotos` (see Gotchas). Outside Next.js, keep a plain `<img>`.
 
 The `.tsx` files are copied from the demo shop, where products stand in for the app's items. `QuantityStepper`, `@/lib/media`, the UI kit, the tooltips and the filter are shop-only. Port `StaggerPart`, `switchView`, the anchor effect and the per-part naming.
 
@@ -112,6 +113,7 @@ Then in a `useLayoutEffect` on `view`, scroll so the anchored item is back at it
 
 ## Gotchas
 
+- **Images can blink in.** During a Transition, React waits for each newly mounted `<img>` to load and decode (up to about 800ms) before the new snapshot is taken, but only for an `<img>` that has no `onLoad` handler and isn't `loading="lazy"`. Any other image can be snapshotted blank and pop in mid-animation. So don't lazy-load images a transition mounts, and don't give them `onLoad`. Next.js's `<Image>` always attaches its own `onLoad`: render a plain `<img>` with `getImageProps()` from `next/image` instead, which gives the same optimized `src` / `srcSet` / `sizes`. `references/product-image.tsx` is that as a drop-in (`ProductImage`). To skip the wait as well, preload the bigger image when the user points at or focuses whatever opens it (`preload(src, { as: "image", imageSrcSet, imageSizes })` from `react-dom`, on `pointerenter` and `focus`), which `preloadOnIntent` in the same file does,, with the same `sizes` as the image that will show it, so the browser picks the same file.
 - Put `data-item={id}` on each item's root in every view so the anchor can find it.
 - Filtering is not part of this pattern. Keep it a plain `setState` so the parts don't morph on filter changes.
 - Many named boundaries make the snapshot heavier. Fine for a few dozen on-screen items; for very long or virtualized lists, only name items near the viewport.

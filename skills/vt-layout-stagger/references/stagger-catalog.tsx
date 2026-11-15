@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ProductImage } from "@/components/shop/product-image"
 import { RiGridLine, RiLayoutGridLine, RiListUnordered } from "@remixicon/react"
 import {
   createContext,
@@ -282,7 +282,7 @@ function Photo({
           exit="fade-out"
           default="none"
         >
-          <Image
+          <ProductImage
             src={variant.src}
             alt={variantAlt(product, variant)}
             fill

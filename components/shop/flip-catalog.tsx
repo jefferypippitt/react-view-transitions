@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { preloadOnIntent, ProductImage } from "@/components/shop/product-image"
 import Link from "next/link"
 import {
   addTransitionType,
@@ -19,6 +19,7 @@ import {
   getProducts,
   isFilter,
   type Product,
+  productHeroSizes,
   productImageSizes,
   variantAlt,
 } from "@/lib/media"
@@ -129,13 +130,16 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <article className="flex min-w-0 flex-col gap-3">
       <Link
+        // Hovering or focusing the card starts fetching the product page's
+        // photo, so the morph has it ready on click.
+        {...preloadOnIntent(variant.src, productHeroSizes)}
         href={`/flip/${product.id}`}
         transitionTypes={["nav-forward"]}
         className="group flex flex-col gap-3"
       >
         <h2 className="truncate font-medium">{`'${product.name}'`}</h2>
         <div className="relative aspect-square overflow-hidden bg-product">
-          <Image
+          <ProductImage
             src={variant.src}
             alt={variantAlt(product, variant)}
             fill

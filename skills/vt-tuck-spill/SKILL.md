@@ -57,6 +57,7 @@ Install any of them with `npx skills add https://github.com/jefferypippitt/react
 
 - `references/transitions.css`: tokens, the `tuck` morph, `tuck-card` (content fade) and `tuck-shift` (glide).
 - `references/tuck-catalog.tsx`: `selectFilter`, `tuckedIn`, `TuckTargets`, and the item boundaries.
+- `references/product-image.tsx`: `ProductImage`, a drop-in for Next.js `<Image>` that never blinks in a transition, plus `preloadOnIntent` and `preloadPhotos` (see Gotchas). Outside Next.js, keep a plain `<img>`.
 
 The `.tsx` file is copied from the demo shop, where products stand in for the app's items and gender for its categories. `QuantityStepper`, `@/lib/media` and the `ToggleGroup` UI are shop-only.
 
@@ -128,7 +129,7 @@ Label each chip with its count, for example `aria-label="Closed, 12 tucked away"
 
 ## Gotchas
 
-- Images: don't lazy-load the item visuals. A spilled-out image must be decoded for the new snapshot.
+- **Images can blink in.** During a Transition, React waits for each newly mounted `<img>` to load and decode (up to about 800ms) before the new snapshot is taken, but only for an `<img>` that has no `onLoad` handler and isn't `loading="lazy"`. Any other image can be snapshotted blank and pop in mid-animation. So don't lazy-load images a transition mounts, and don't give them `onLoad`. Next.js's `<Image>` always attaches its own `onLoad`: render a plain `<img>` with `getImageProps()` from `next/image` instead, which gives the same optimized `src` / `srcSet` / `sizes`. `references/product-image.tsx` is that as a drop-in (`ProductImage`). To skip the wait as well, preload the bigger image when the user points at or focuses whatever opens it (`preload(src, { as: "image", imageSrcSet, imageSizes })` from `react-dom`, on `pointerenter` and `focus`), which `preloadOnIntent` in the same file does,, with the same `sizes` as the image that will show it, so the browser picks the same file.
 - Items in no category (or in every category) never tuck; they just stay.
 - Every name must be rendered in exactly one place at a time.
 - Every hidden item gets a target. Fine for dozens; for hundreds, tuck only the ones on screen and let the rest fade.

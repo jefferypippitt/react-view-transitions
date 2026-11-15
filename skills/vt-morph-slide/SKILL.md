@@ -66,6 +66,7 @@ Install any of them with `npx skills add https://github.com/jefferypippitt/react
 - `references/slide-transition.tsx`: the `SlideTransition` component.
 - `references/example.tsx`: the whole pattern with the shop removed (grid, detail, variants, prev/next). Read it before editing.
 - `references/history-view-transitions.tsx`: optional Next.js-only fix for browser back/forward.
+- `references/product-image.tsx`: `ProductImage`, a drop-in for Next.js `<Image>` that never blinks in a transition, plus `preloadOnIntent` and `preloadPhotos` (see Gotchas). Outside Next.js, keep a plain `<img>`.
 
 ## Steps
 
@@ -152,6 +153,10 @@ If the shared visual is text (a title, a name), scaling its snapshot stretches t
 ```
 
 Then use `share="morph-text"` in place of the image class on that boundary.
+
+## Gotchas
+
+- **Images can blink in.** During a Transition, React waits for each newly mounted `<img>` to load and decode (up to about 800ms) before the new snapshot is taken, but only for an `<img>` that has no `onLoad` handler and isn't `loading="lazy"`. Any other image can be snapshotted blank and pop in mid-animation. So don't lazy-load images a transition mounts, and don't give them `onLoad`. Next.js's `<Image>` always attaches its own `onLoad`: render a plain `<img>` with `getImageProps()` from `next/image` instead, which gives the same optimized `src` / `srcSet` / `sizes`. `references/product-image.tsx` is that as a drop-in (`ProductImage`). To skip the wait as well, preload the bigger image when the user points at or focuses whatever opens it (`preload(src, { as: "image", imageSrcSet, imageSizes })` from `react-dom`, on `pointerenter` and `focus`), which `preloadOnIntent` in the same file does,, with the same `sizes` as the image that will show it, so the browser picks the same file.
 
 ## Motion rules
 

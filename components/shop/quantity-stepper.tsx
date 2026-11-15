@@ -39,7 +39,10 @@ export function QuantityStepper({
       <span
         aria-live="polite"
         aria-label={`${quantity} in bag`}
-        className={cn("text-center tabular-nums", size === "xs" ? "w-6" : "w-8")}
+        className={cn(
+          "text-center tabular-nums",
+          size === "xs" ? "w-6" : "w-8"
+        )}
       >
         {quantity}
       </span>

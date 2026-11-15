@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ProductImage } from "@/components/shop/product-image"
 import Link from "next/link"
 import { useState } from "react"
 import { RiArrowLeftSLine } from "@remixicon/react"
@@ -139,7 +139,7 @@ export function Checkout({
                     <div className="flex items-center gap-4">
                       {wrapPhoto(
                         <div className="relative size-12 shrink-0 overflow-hidden bg-product">
-                          <Image
+                          <ProductImage
                             src={line.variant.src}
                             alt=""
                             fill

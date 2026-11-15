@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ProductImage } from "@/components/shop/product-image"
 import {
   addTransitionType,
   startTransition,
@@ -177,7 +177,7 @@ function Stage({
               the photo takes only the height the details leave free (header,
               label, details ≈ 25rem): the + / − stepper stays on screen. */}
           <div className="relative size-24 shrink-0 overflow-hidden bg-product md:aspect-square md:size-auto md:w-[min(100%,calc(100svh-25rem))]">
-            <Image
+            <ProductImage
               src={variant.src}
               alt={variantAlt(product, variant)}
               fill
@@ -272,7 +272,7 @@ function SwapCard({
         {/* Shared element: pairs with the stage photo of the same name. */}
         <ViewTransition name={`swap-${product.id}`} share="swap" default="none">
           <div className="relative aspect-square overflow-hidden bg-product">
-            <Image
+            <ProductImage
               src={variant.src}
               alt={variantAlt(product, variant)}
               fill

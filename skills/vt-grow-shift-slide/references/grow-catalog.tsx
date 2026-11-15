@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ProductImage } from "@/components/shop/product-image"
 import { RiCloseLine } from "@remixicon/react"
 import {
   addTransitionType,
@@ -172,7 +172,7 @@ function Card({
       >
         <span className="truncate font-medium">{`'${product.name}'`}</span>
         <Photo product={product}>
-          <Image
+          <ProductImage
             src={variant.src}
             alt={variantAlt(product, variant)}
             fill
@@ -237,7 +237,7 @@ function OpenTile({
       </div>
       <Photo product={product}>
         <SlideTransition key={variant.color}>
-          <Image
+          <ProductImage
             src={variant.src}
             alt={variantAlt(product, variant)}
             fill

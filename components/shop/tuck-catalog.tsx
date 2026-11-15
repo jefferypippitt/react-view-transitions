@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ProductImage } from "@/components/shop/product-image"
 import {
   addTransitionType,
   startTransition,
@@ -153,7 +153,7 @@ function ProductCard({ product }: { product: Product }) {
       <h2 className="truncate font-medium">{`'${product.name}'`}</h2>
       <ViewTransition name={tuckName(product)} share={tuckShare} default="none">
         <div className="relative aspect-square overflow-hidden bg-product">
-          <Image
+          <ProductImage
             src={variant.src}
             alt={variantAlt(product, variant)}
             fill

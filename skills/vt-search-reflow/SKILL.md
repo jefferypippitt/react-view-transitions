@@ -61,6 +61,7 @@ Install any of them with `npx skills add https://github.com/jefferypippitt/react
 
 - `references/transitions.css`: tokens, `search-in` / `search-out` / `search-move`.
 - `references/search-catalog.tsx`: the deferred query, the result boundaries, the empty state and match highlighting.
+- `references/product-image.tsx`: `ProductImage`, a drop-in for Next.js `<Image>` that never blinks in a transition, plus `preloadOnIntent` and `preloadPhotos` (see Gotchas). Outside Next.js, keep a plain `<img>`.
 
 The `.tsx` file is copied from the demo shop, where products stand in for the app's items. `QuantityStepper`, `@/lib/media`, the UI kit and the gender filter are shop-only.
 
@@ -110,6 +111,7 @@ Announce the count with `aria-live="polite"`, label the input, and have Esc clea
 
 ## Gotchas
 
+- **Images can blink in.** During a Transition, React waits for each newly mounted `<img>` to load and decode (up to about 800ms) before the new snapshot is taken, but only for an `<img>` that has no `onLoad` handler and isn't `loading="lazy"`. Any other image can be snapshotted blank and pop in mid-animation. So don't lazy-load images a transition mounts, and don't give them `onLoad`. Next.js's `<Image>` always attaches its own `onLoad`: render a plain `<img>` with `getImageProps()` from `next/image` instead, which gives the same optimized `src` / `srcSet` / `sizes`. `references/product-image.tsx` is that as a drop-in (`ProductImage`). To skip the wait as well, preload the bigger image when the user points at or focuses whatever opens it (`preload(src, { as: "image", imageSrcSet, imageSizes })` from `react-dom`, on `pointerenter` and `focus`), which `preloadOnIntent` in the same file does,, with the same `sizes` as the image that will show it, so the browser picks the same file.
 - No wrapper element between the results container and the boundaries, or results can't move.
 - Don't key the container by the query: that would swap the whole set instead of reflowing it.
 - Tables: wrap each row. If the table's layout breaks during the transition, lay the rows out with CSS grid instead of `display: table`.

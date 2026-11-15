@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { preloadPhotos, ProductImage } from "@/components/shop/product-image"
 import {
   addTransitionType,
   startTransition,
@@ -18,7 +18,13 @@ import { QuantityStepper } from "@/components/shop/quantity-stepper"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { cartKey, formatPrice, type Product, variantAlt } from "@/lib/media"
+import {
+  cartKey,
+  formatPrice,
+  type Product,
+  quickViewImageSizes,
+  variantAlt,
+} from "@/lib/media"
 
 export type Step = "nav-forward" | "nav-back"
 
@@ -138,6 +144,11 @@ function QuickViewBody({ product }: { product: Product }) {
   )
   const variant = product.variants[index]!
 
+  preloadPhotos(
+    product.variants.filter((v) => v !== variant).map((v) => v.src),
+    quickViewImageSizes
+  )
+
   function selectColor(next: string) {
     const nextIndex = product.variants.findIndex((v) => v.color === next)
     if (nextIndex === index) return
@@ -156,12 +167,12 @@ function QuickViewBody({ product }: { product: Product }) {
       >
         <div className="relative aspect-square overflow-hidden bg-product">
           <CarouselTransition key={variant.color}>
-            <Image
+            <ProductImage
               src={variant.src}
               alt={variantAlt(product, variant)}
               fill
               preload
-              sizes="(min-width: 576px) 528px, 100vw"
+              sizes={quickViewImageSizes}
               className="object-contain p-[8%]"
             />
           </CarouselTransition>

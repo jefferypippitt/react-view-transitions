@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { preloadOnIntent, ProductImage } from "@/components/shop/product-image"
 import Link from "next/link"
 import { startTransition, useState, ViewTransition } from "react"
 
@@ -14,6 +14,7 @@ import {
   getProducts,
   isFilter,
   type Product,
+  productHeroSizes,
   variantAlt,
 } from "@/lib/media"
 
@@ -29,7 +30,9 @@ export function MorphCatalog() {
   return (
     <div className="flex flex-col gap-10">
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 whitespace-nowrap">
-        <h1 className="text-[0.8rem] font-medium tracking-wide">All products</h1>
+        <h1 className="text-[0.8rem] font-medium tracking-wide">
+          All products
+        </h1>
         <ToggleGroup
           size="sm"
           aria-label="Filter products"
@@ -72,6 +75,9 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <article className="flex min-w-0 flex-col gap-3">
       <Link
+        // Hovering or focusing the card starts fetching the product page's
+        // photo, so the morph has it ready on click.
+        {...preloadOnIntent(variant.src, productHeroSizes)}
         href={`/morph/${product.id}`}
         transitionTypes={["nav-forward"]}
         className="group flex flex-col gap-3"
@@ -86,7 +92,7 @@ function ProductCard({ product }: { product: Product }) {
           default="none"
         >
           <div className="relative aspect-square overflow-hidden bg-product">
-            <Image
+            <ProductImage
               src={variant.src}
               alt={variantAlt(product, variant)}
               fill

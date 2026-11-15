@@ -62,6 +62,7 @@ Install any of them with `npx skills add https://github.com/jefferypippitt/react
 - `references/transitions.css`: the tokens, keyframes and classes.
 - `references/catalog.tsx`: the demo's filtered grid (filter → keyed boundary).
 - `references/product-view.tsx`: the demo's detail view (variant → keyed boundary).
+- `references/product-image.tsx`: `ProductImage`, a drop-in for Next.js `<Image>` that never blinks in a transition, plus `preloadOnIntent` and `preloadPhotos` (see Gotchas). Outside Next.js, keep a plain `<img>`.
 
 The `.tsx` files are copied from the demo shop, where products stand in for the app's items. `QuantityStepper`, `@/lib/media`, the cart and the `ToggleGroup` UI are shop-only. Port only the `<ViewTransition>` wiring.
 
@@ -115,6 +116,7 @@ Update the selection in `startTransition(() => setSelected(next))`.
 
 ## Gotchas
 
+- **Images can blink in.** During a Transition, React waits for each newly mounted `<img>` to load and decode (up to about 800ms) before the new snapshot is taken, but only for an `<img>` that has no `onLoad` handler and isn't `loading="lazy"`. Any other image can be snapshotted blank and pop in mid-animation. So don't lazy-load images a transition mounts, and don't give them `onLoad`. Next.js's `<Image>` always attaches its own `onLoad`: render a plain `<img>` with `getImageProps()` from `next/image` instead, which gives the same optimized `src` / `srcSet` / `sizes`. `references/product-image.tsx` is that as a drop-in (`ProductImage`). To skip the wait as well, preload the bigger image when the user points at or focuses whatever opens it (`preload(src, { as: "image", imageSrcSet, imageSizes })` from `react-dom`, on `pointerenter` and `focus`), which `preloadOnIntent` in the same file does,, with the same `sizes` as the image that will show it, so the browser picks the same file.
 - A plain `setState` never animates. Only Transitions (`startTransition`, router navigations, `useDeferredValue`, Suspense) do.
 - `default="none"` stops the boundary from animating on unrelated updates (a badge count changing, say).
 - Keyboard shortcuts update state outside a Transition so they stay instant.
