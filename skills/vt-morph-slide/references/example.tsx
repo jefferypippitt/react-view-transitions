@@ -12,7 +12,7 @@ import {
   preloadOnIntent,
   preloadPhotos,
   ProductImage,
-} from "@/components/product-image"
+} from "./product-image"
 import { SlideTransition } from "@/components/slide-transition"
 
 // Each image slot's rendered size. Preloads must use the same `sizes` as
