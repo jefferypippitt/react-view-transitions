@@ -867,6 +867,67 @@
   animation: var(--duration-move) var(--ease-out) both cover-lift;
 }
 
+/* Compare + Split (components/shop/compare-catalog.tsx).
+   - Tray enter/exit: rises gently in place while the grid below glides to
+     make room (Layout Displacement Morph via .compare-shift).
+   - Chip enter/exit: subtle scale(0.95) + fade (never scale(0)).
+   - Column enter/exit: crisp fade for the spec rows while the named product
+     photos pull out and morph simultaneously from their grid cells (.morph). */
+@keyframes compare-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes compare-rise-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes compare-chip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes compare-chip-out {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+::view-transition-new(.compare-bar-in) {
+  animation: var(--duration-enter) var(--ease-out) both compare-rise-in;
+}
+::view-transition-old(.compare-bar-out) {
+  animation: var(--duration-exit) var(--ease-out) both compare-rise-out;
+}
+::view-transition-new(.compare-chip-in) {
+  animation: var(--duration-enter) var(--ease-out) both compare-chip-in;
+}
+::view-transition-old(.compare-chip-out) {
+  animation: var(--duration-exit) var(--ease-out) both compare-chip-out;
+}
+::view-transition-group(.compare-shift) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: var(--ease-drawer);
+}
+::view-transition-new(.compare-col-in) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both fade;
+}
+::view-transition-old(.compare-col-out) {
+  animation: var(--duration-exit) var(--ease-out) both fade-out;
+}
+
 /* Reduced motion means gentler, not none: nothing moves, scales, slides or
    blurs, but every change still cross-fades quickly in place, so content
    never pops. Waves and delays are dropped. */

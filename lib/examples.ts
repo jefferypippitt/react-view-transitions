@@ -46,6 +46,11 @@ export const examples: Example[] = [
     transitions: ["Wipe", "Dive", "Stack", "Cover"],
     skill: "vt-wipe-dive-stack-cover",
   },
+  {
+    href: "/compare",
+    transitions: ["Compare", "Split"],
+    skill: "vt-compare-split",
+  },
 ]
 
 /** "'Morph' + 'Slide'", as shown on the homepage. */
