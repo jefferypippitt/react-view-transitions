@@ -34,7 +34,7 @@ Before editing anything:
 
 Other skills in this set, by the shape they need:
 
-- `vt-fade`, `vt-blur`: any pages or swappable content
+- `vt-fade`, `vt-blur`, `vt-fold`, `vt-shear`: any pages or swappable content
 - `vt-morph-slide`: a list and a detail view that share a visual
 - `vt-expand-carousel`: a list and a side panel or sheet
 - `vt-fly-dock`: adding items to a collection (cart, bookmarks, playlist, tray)
@@ -46,6 +46,7 @@ Other skills in this set, by the shape they need:
 - `vt-flip-deal`: a grid whose items change in place, or content that turns over
 - `vt-wipe-dive-stack-cover`: a filtered list, list → detail, variants and a sheet page
 - `vt-compare-split`: a list where a few items are picked and compared side by side
+- `vt-lift-swing-sway`: a grid that opens detail pages with prev/next, told as a clothing rail
 
 Install any of them with `npx skills add https://github.com/jefferypippitt/react-view-transitions --skill <name>`.
 

@@ -223,6 +223,73 @@
     blur-in;
 }
 
+/* <ViewTransition enter="fold-in" exit="fold-out">: a fold on the top
+   crease. Both halves turn the same way around the top edge (rotateX, so
+   the axis is horizontal, unlike Flip's rotateY or the rack's sideways
+   swing): the old view folds forward off the page, its bottom edge tipping
+   toward you as it fades, and the new one folds down into place from
+   behind. Same timing as the fade. Used by the Fold demo (app/fold) for
+   pages, the filtered grid and color swaps. */
+@keyframes fold-in {
+  from {
+    opacity: 0;
+    transform: perspective(1600px) rotateX(-24deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fold-out {
+  to {
+    opacity: 0;
+    transform: perspective(1600px) rotateX(12deg);
+  }
+}
+::view-transition-old(.fold-out),
+::view-transition-new(.fold-in) {
+  transform-origin: 50% 0;
+}
+::view-transition-old(.fold-out) {
+  animation: var(--duration-exit) var(--ease-out) both fold-out;
+}
+::view-transition-new(.fold-in) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both
+    fold-in;
+}
+
+/* <ViewTransition enter="shear-in" exit="shear-out">: a shear (skewX),
+   the one 2D transform no other demo uses. Nothing travels, rotates or
+   scales: the old view leans over (its top edge slides left of its bottom)
+   as it fades, and the new one arrives leaning the other way and stands up
+   straight, so the hand-off reads as one rocking motion. Pivot at the
+   center keeps the lean even on tall snapshots like the grid. Same timing
+   as the fade. Used by the Shear demo (app/shear) for pages, the filtered
+   grid and color swaps. */
+@keyframes shear-in {
+  from {
+    opacity: 0;
+    transform: skewX(6deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes shear-out {
+  to {
+    opacity: 0;
+    transform: skewX(-4deg);
+  }
+}
+::view-transition-old(.shear-out) {
+  animation: var(--duration-exit) var(--ease-out) both shear-out;
+}
+::view-transition-new(.shear-in) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both
+    shear-in;
+}
+
 /* <SlideTransition> (components/slide-transition.tsx): types nav-forward /
    nav-back map to these classes. Forward: old leaves left, new comes from the
    right. Back: the reverse. */
@@ -926,6 +993,240 @@
 }
 ::view-transition-old(.compare-col-out) {
   animation: var(--duration-exit) var(--ease-out) both fade-out;
+}
+
+/* Lift + Swing + Sway (components/shop/rack-catalog.tsx). The shop as a
+   clothing rail. Everything that swings pivots at its top edge
+   (transform-origin: 50% 0), so it hangs instead of spinning. A swing is a
+   damped pendulum: each keyframe is one half-swing, smaller than the last,
+   with its own in-out curve so it slows at the ends of the arc like a real
+   one. Motion follows the emil-design-eng skill: two half-swings inside
+   --duration-move (300ms), so the swing lands with the move instead of
+   trailing after it; a 2px blur at the peak of the first half-swing masks
+   the cross-fade between the card's and the hero's snapshots; cards stagger
+   30ms apart (capped at six); exits run faster than entrances. */
+
+/* Lift: a garment taken off the rail. The group carries it to the product
+   page; the image pair adds the swing: lifted and lagging behind at first,
+   then one swing back and it settles. */
+::view-transition-group(.lift),
+::view-transition-group(.hang) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: var(--ease-drawer);
+  z-index: 50;
+}
+::view-transition-image-pair(.lift),
+::view-transition-image-pair(.hang) {
+  transform-origin: 50% 0;
+}
+::view-transition-image-pair(.lift) {
+  animation: var(--duration-move) linear both swing-lift;
+}
+::view-transition-image-pair(.hang) {
+  animation: var(--duration-move) linear both swing-hang;
+}
+/* The snapshots inside would inherit the pair's linear timing: give their
+   cross-fade its own ease-out. */
+::view-transition-old(.lift),
+::view-transition-new(.lift),
+::view-transition-old(.hang),
+::view-transition-new(.hang) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: var(--ease-out);
+}
+@keyframes swing-lift {
+  0% {
+    animation-timing-function: var(--ease-out);
+  }
+  35% {
+    rotate: -6deg;
+    translate: 0 -10px;
+    filter: blur(2px);
+    animation-timing-function: var(--ease-swap);
+  }
+  70% {
+    rotate: 2deg;
+    translate: 0 0;
+    filter: blur(0);
+    animation-timing-function: var(--ease-out);
+  }
+  100% {
+    rotate: 0deg;
+  }
+}
+/* Hang: put back on the rail. It drops onto the hook and swings the other
+   way first. */
+@keyframes swing-hang {
+  0% {
+    animation-timing-function: var(--ease-out);
+  }
+  35% {
+    rotate: 5deg;
+    translate: 0 4px;
+    filter: blur(2px);
+    animation-timing-function: var(--ease-swap);
+  }
+  70% {
+    rotate: -1.5deg;
+    translate: 0 0;
+    filter: blur(0);
+    animation-timing-function: var(--ease-out);
+  }
+  100% {
+    rotate: 0deg;
+  }
+}
+
+/* Sway: the rail. When a garment is pulled off, the others jostle (a short
+   tip on their hangers) as they fade. When it goes back, every card swings
+   in on its hanger, one after another along the rail (wave-N, 30ms apart),
+   as if the rail was bumped. */
+::view-transition-old(.sway-off),
+::view-transition-new(.sway-on) {
+  transform-origin: 50% 0;
+}
+@keyframes sway-off {
+  40% {
+    rotate: 3deg;
+  }
+  to {
+    rotate: -1.5deg;
+    opacity: 0;
+  }
+}
+::view-transition-old(.sway-off) {
+  animation: 200ms var(--ease-out) calc(var(--wave, 0) * 30ms) both sway-off;
+}
+@keyframes sway-on {
+  0% {
+    opacity: 0;
+    rotate: 4deg;
+    animation-timing-function: var(--ease-out);
+  }
+  50% {
+    opacity: 1;
+    rotate: -1.5deg;
+    animation-timing-function: var(--ease-out);
+  }
+  100% {
+    opacity: 1;
+    rotate: 0deg;
+  }
+}
+::view-transition-new(.sway-on) {
+  animation: var(--duration-move) linear calc(var(--wave, 0) * 30ms) both
+    sway-on;
+}
+
+/* Swing: along the rail (prev/next on the product page). The leaving
+   garment is pushed off, its bottom lagging behind; the arriving one rides
+   in, stops, and swings once past centre before it settles. Moving
+   left (rail-next) the bottom lags to the right (a negative angle);
+   rail-prev mirrors it. */
+::view-transition-old(.rail-next),
+::view-transition-new(.rail-next),
+::view-transition-old(.rail-prev),
+::view-transition-new(.rail-prev) {
+  transform-origin: 50% 0;
+}
+::view-transition-old(.rail-next),
+::view-transition-new(.rail-next) {
+  --rail-lag: -6deg;
+}
+::view-transition-old(.rail-prev),
+::view-transition-new(.rail-prev) {
+  --rail-lag: 6deg;
+}
+::view-transition-old(.rail-next) {
+  --rail-to: -120px;
+}
+::view-transition-new(.rail-next) {
+  --rail-from: 120px;
+}
+::view-transition-old(.rail-prev) {
+  --rail-to: 120px;
+}
+::view-transition-new(.rail-prev) {
+  --rail-from: -120px;
+}
+@keyframes rail-out {
+  to {
+    opacity: 0;
+    translate: var(--rail-to) 0;
+    rotate: var(--rail-lag);
+  }
+}
+@keyframes rail-in {
+  0% {
+    opacity: 0;
+    translate: var(--rail-from) 0;
+    rotate: var(--rail-lag);
+    animation-timing-function: var(--ease-out);
+  }
+  55% {
+    opacity: 1;
+    translate: 0 0;
+    rotate: calc(var(--rail-lag) * -0.4);
+    animation-timing-function: var(--ease-out);
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}
+::view-transition-old(.rail-next),
+::view-transition-old(.rail-prev) {
+  animation: var(--duration-exit) var(--ease-out) both rail-out;
+}
+::view-transition-new(.rail-next),
+::view-transition-new(.rail-prev) {
+  animation: var(--duration-move) linear both rail-in;
+}
+
+/* The product page's blocks drop into place under the garment, one after
+   another, once it has been lifted; going back they lift away together,
+   faster. */
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    translate: 0 -12px;
+  }
+}
+@keyframes lift-off {
+  to {
+    opacity: 0;
+    translate: 0 -8px;
+  }
+}
+::view-transition-new(.drop-in) {
+  animation: var(--duration-enter) var(--ease-out)
+    calc(var(--enter-delay) + var(--wave, 0) * 40ms) both drop-in;
+}
+::view-transition-old(.lift-off) {
+  animation: var(--duration-exit) var(--ease-out) both lift-off;
+}
+
+/* What no boundary owns (the filter row) cross-fades on the same tokens
+   instead of the browser's default. */
+:root:active-view-transition-type(
+    rack-lift,
+    rack-bag,
+    rack-return,
+    rail-next,
+    rail-prev
+  )::view-transition-old(root) {
+  animation: var(--duration-exit) var(--ease-out) both fade-out;
+}
+:root:active-view-transition-type(
+    rack-lift,
+    rack-bag,
+    rack-return,
+    rail-next,
+    rail-prev
+  )::view-transition-new(root) {
+  animation: var(--duration-enter) var(--ease-out) var(--enter-delay) both
+    fade;
 }
 
 /* Reduced motion means gentler, not none: nothing moves, scales, slides or
